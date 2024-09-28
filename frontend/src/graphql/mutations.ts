@@ -150,3 +150,16 @@ export const MARK_NOTIFICATION_AS_READ = gql`
     }
   }
 `;
+
+export const GOOGLE_SIGN_IN = gql`
+  mutation GoogleSignIn($accessToken: String!) {
+    googleSignIn(accessToken: $accessToken) {
+      token
+      user {
+        id
+        username
+        email
+      }
+    }
+  }
+`;

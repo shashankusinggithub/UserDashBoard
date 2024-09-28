@@ -1,5 +1,7 @@
 import { IResolvers } from "@graphql-tools/utils";
 import { Context } from "../context";
+import { verifyGoogleToken, generateJwtToken } from "../utils/googleAuth";
+
 import { AuthenticationError, UserInputError } from "apollo-server-express";
 import {
   comparePasswords,
@@ -124,6 +126,27 @@ const userResolvers: IResolvers<any, Context> = {
       });
       const token = generateToken(user.id);
       return { token, user };
+    },
+    googleSignIn: async (parent, { token }, { prisma }) => {
+      const user = await verifyGoogleToken(token);
+      const existingUser = await prisma.user.findUnique({
+        where: { email: user.email },
+      });
+      if (existingUser) {
+        return { token, user: existingUser };
+      }
+      const newUser = await prisma.user.create({
+        data: {
+          username: user.email,
+          email: user.email,
+          firstName: user.name ? user.name.split(" ")[0] : "",
+          lastName: user.name ? user.name.split(" ").slice(1).join(" ") : "",
+          password: "", // Add a default empty password
+          profilePicture: user.picture,
+        },
+      });
+
+      return { token, newUser };
     },
     login: async (parent, { email, password }, { prisma }) => {
       const user = await prisma.user.findUnique({ where: { email } });

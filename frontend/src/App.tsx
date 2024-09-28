@@ -18,34 +18,42 @@ import FriendRequest from "./components/FriendRequest";
 import ProfileEdit from "./components/ProfileEdit";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import "./styles/global.css"; // Import the global CSS
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const App: React.FC = () => {
   return (
     <ApolloProvider client={client}>
-      <AuthProvider client={client}>
-        <DarkModeProvider>
-          <Router>
-            <div className="min-h-screen dark:bg-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-grey ">
-              <Header />
-              <main className="container dark:bg-gray-800 bg-gray-100 mx-auto mt-4 p-4 ">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/conversations" element={<Conversations />} />
-                  <Route path="/conversations/:id" element={<Chat />} />
-                  <Route path="/friends" element={<Friends />} />
-                  <Route path="/notifications" element={<Notifications />} />
-                  <Route path="/login" element={<LoginForm />} />
-                  <Route path="/register" element={<RegisterForm />} />
-                  <Route path="/find-friends" element={<FindFriends />} />
-                  <Route path="/friend-requests" element={<FriendRequest />} />
-                  <Route path="/profile-edit" element={<ProfileEdit />} />
-                </Routes>
-              </main>
-            </div>
-          </Router>
-        </DarkModeProvider>
-      </AuthProvider>
+      <GoogleOAuthProvider
+        clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID || ""}
+      >
+        <AuthProvider client={client}>
+          <DarkModeProvider>
+            <Router>
+              <div className="min-h-screen dark:bg-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-grey ">
+                <Header />
+                <main className="container dark:bg-gray-800 bg-gray-100 mx-auto mt-4 p-4 ">
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/conversations" element={<Conversations />} />
+                    <Route path="/conversations/:id" element={<Chat />} />
+                    <Route path="/friends" element={<Friends />} />
+                    <Route path="/notifications" element={<Notifications />} />
+                    <Route path="/login" element={<LoginForm />} />
+                    <Route path="/register" element={<RegisterForm />} />
+                    <Route path="/find-friends" element={<FindFriends />} />
+                    <Route
+                      path="/friend-requests"
+                      element={<FriendRequest />}
+                    />
+                    <Route path="/profile-edit" element={<ProfileEdit />} />
+                  </Routes>
+                </main>
+              </div>
+            </Router>
+          </DarkModeProvider>
+        </AuthProvider>
+      </GoogleOAuthProvider>
     </ApolloProvider>
   );
 };

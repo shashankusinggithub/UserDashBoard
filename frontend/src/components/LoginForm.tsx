@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { LOGIN } from "../graphql/mutations";
 import { useAuth } from "../hooks/useAuth";
 import { useForm } from "../hooks/useForm";
+import GoogleSignInButton from "./GoogleSignInButton";
 
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
@@ -62,6 +63,7 @@ const LoginForm: React.FC = () => {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
+        <GoogleSignInButton />
         <button
           className="bg-green-500 text-white px-4 py-2 rounded "
           onClick={() => navigate("/register")}
