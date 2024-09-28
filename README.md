@@ -1,5 +1,11 @@
 # GraphQL API Documentation
 
+## Execute the following command to start the development server
+
+```bash
+bash ./docker-run.sh
+```
+
 ## Table of Contents
 
 1. [Overview](#overview)

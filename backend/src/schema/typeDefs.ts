@@ -105,6 +105,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    removeFriend(friendId: ID!): User!
     register(
       username: String!
       email: String!

@@ -190,6 +190,72 @@ const userResolvers: IResolvers<any, Context> = {
       });
       return updatedUser;
     },
+    removeFriend: async (_, { friendId }, { prisma, user }: Context) => {
+      if (!user) {
+        throw new AuthenticationError(
+          "You must be logged in to remove a friend"
+        );
+      }
+
+      const friend = await prisma.user.findUnique({ where: { id: friendId } });
+      if (!friend) {
+        throw new UserInputError("Friend not found");
+      }
+
+      // Check if they are actually friends
+      const areFriends = await prisma.user.findFirst({
+        where: {
+          id: user.id,
+          friends: {
+            some: {
+              id: friendId,
+            },
+          },
+        },
+      });
+
+      if (!areFriends) {
+        throw new UserInputError("You are not friends with this user");
+      }
+
+      // Remove the friend connection
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          friends: {
+            disconnect: { id: friendId },
+          },
+        },
+      });
+
+      // Remove the reverse friend connection
+      await prisma.user.update({
+        where: { id: friendId },
+        data: {
+          friends: {
+            disconnect: { id: user.id },
+          },
+        },
+      });
+
+      // Remove any existing FriendRequest records between these users
+      await prisma.friendRequest.deleteMany({
+        where: {
+          OR: [
+            { senderId: user.id, receiverId: friendId },
+            { senderId: friendId, receiverId: user.id },
+          ],
+        },
+      });
+
+      // Fetch and return the updated user
+      const updatedUser = await prisma.user.findUnique({
+        where: { id: user.id },
+        include: { friends: true },
+      });
+
+      return updatedUser;
+    },
   },
 };
 

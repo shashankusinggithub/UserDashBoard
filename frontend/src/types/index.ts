@@ -210,6 +210,10 @@ export interface NewPostSubscription {
   newPost: Post;
 }
 
+export interface RemoveFriendMutationResult {
+  removeFriend: User;
+}
+
 export interface NewFriendRequestSubscription {
   newFriendRequest: FriendRequest;
 }

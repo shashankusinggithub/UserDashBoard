@@ -59,9 +59,13 @@ const messageResolver: IResolvers = {
 
       if (!conversation) throw new UserInputError("Conversation not found");
 
-      // Uncomment the following lines if you want to restrict access to conversation participants only
-      // const isParticipant = conversation.participants.some(p => p.userId === user.id);
-      // if (!isParticipant) throw new AuthenticationError("Not authorized to view messages in this conversation");
+      const isParticipant = conversation.participants.some(
+        (p) => p.userId === user.id
+      );
+      if (!isParticipant)
+        throw new AuthenticationError(
+          "Not authorized to view messages in this conversation"
+        );
 
       return prisma.message.findMany({
         where: { conversationId },
@@ -94,7 +98,7 @@ const messageResolver: IResolvers = {
       });
 
       if (existingConversation) return existingConversation;
-
+      console.log("Creating new conversation", uniqueParticipantIds);
       // Create new conversation if it doesn't exist
       return prisma.conversation.create({
         data: {

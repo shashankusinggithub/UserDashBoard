@@ -8,9 +8,9 @@ RUN npm install
 
 COPY . .
 
-RUN npx prisma generate
+ENV DATABASE_URL=postgresql://myuser:mypassword@postgres:5432/mydatabase
 
-RUN npx prisma migrate deploy
+RUN npx prisma generate
 
 EXPOSE 4000
 

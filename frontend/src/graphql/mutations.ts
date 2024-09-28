@@ -163,3 +163,12 @@ export const GOOGLE_SIGN_IN = gql`
     }
   }
 `;
+
+export const REMOVE_FRIEND = gql`
+  mutation RemoveFriend($friendId: ID!) {
+    removeFriend(friendId: $friendId) {
+      id
+      username
+    }
+  }
+`;

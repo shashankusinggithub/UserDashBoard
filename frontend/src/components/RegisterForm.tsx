@@ -42,7 +42,7 @@ const RegisterForm: React.FC = () => {
           value={values.username}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 border rounded"
+          className="w-full px-3 py-2 border rounded text-black"
         />
       </div>
       <div className="mb-4">
@@ -56,7 +56,7 @@ const RegisterForm: React.FC = () => {
           value={values.email}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 border rounded"
+          className="w-full px-3 py-2 border rounded text-black"
         />
       </div>
       <div className="mb-4">
@@ -70,7 +70,7 @@ const RegisterForm: React.FC = () => {
           value={values.password}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 border rounded"
+          className="w-full px-3 py-2 border rounded text-black "
         />
       </div>
       <div className="mb-4">
@@ -84,7 +84,7 @@ const RegisterForm: React.FC = () => {
           value={values.firstName}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 border rounded"
+          className="w-full px-3 py-2 border rounded text-black"
         />
       </div>
       <div className="mb-4">
@@ -98,7 +98,7 @@ const RegisterForm: React.FC = () => {
           value={values.lastName}
           onChange={handleChange}
           required
-          className="w-full px-3 py-2 border rounded"
+          className="w-full px-3 py-2 border rounded text-black "
         />
       </div>
       {error && <p className="text-red-500 mb-4">{error.message}</p>}

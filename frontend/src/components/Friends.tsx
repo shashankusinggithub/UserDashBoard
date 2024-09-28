@@ -3,12 +3,16 @@ import { useMutation, useQuery } from "@apollo/client";
 import { GET_FRIENDS } from "../graphql/queries";
 import { User } from "../types";
 import { handleError } from "../utils/error-handling";
-import { CREATE_OR_GET_CONVERSATION } from "../graphql/mutations";
+import {
+  CREATE_OR_GET_CONVERSATION,
+  REMOVE_FRIEND,
+} from "../graphql/mutations";
 import { useNavigate } from "react-router-dom";
 
 const Friends: React.FC = () => {
   const { loading, error, data } = useQuery(GET_FRIENDS);
   const [createConversation] = useMutation(CREATE_OR_GET_CONVERSATION);
+  const [removeFriend] = useMutation(REMOVE_FRIEND);
   const navigate = useNavigate();
   const handleStartChat = async (friendId: string) => {
     try {
@@ -26,8 +30,13 @@ const Friends: React.FC = () => {
   if (error)
     return <div className="text-center text-red-500">{handleError(error)}</div>;
 
-  const handleRemoveFriend = (friendId: string) => {
-    console.log(friendId);
+  const handleRemoveFriend = async (friendId: string) => {
+    try {
+      const { data } = await removeFriend({ variables: { friendId } });
+    } catch (err) {
+      console.error("Error removing friend:", err);
+    }
+    navigate("/friends");
   };
 
   return (
@@ -36,7 +45,7 @@ const Friends: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {data.me.friends?.map((friend: User) => (
           <div key={friend.id} className="bg-white p-4 rounded-lg shadow-md">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-3">
               <img
                 src={friend.profilePicture || "/default-avatar.png"}
                 alt={`${friend.username}'s avatar`}
@@ -48,18 +57,20 @@ const Friends: React.FC = () => {
                   {friend.firstName} {friend.lastName}
                 </p>
               </div>
-              <button
-                onClick={() => handleStartChat(friend.id)}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
-              >
-                Chat
-              </button>
-              <button
-                onClick={() => handleRemoveFriend(friend.id)}
-                className="bg-red-500 text-white px-4 py-2 rounded ml-auto"
-              >
-                Remove Friend
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => handleStartChat(friend.id)}
+                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+                >
+                  Chat
+                </button>
+                <button
+                  onClick={() => handleRemoveFriend(friend.id)}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
+                >
+                  Unfriend
+                </button>
+              </div>
             </div>
           </div>
         ))}

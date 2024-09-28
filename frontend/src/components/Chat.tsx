@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import { GET_MESSAGES } from "../graphql/queries";
@@ -13,7 +13,7 @@ const Chat: React.FC = () => {
   const { loading, error, data, subscribeToMore } = useQuery(GET_MESSAGES, {
     variables: { conversationId: id },
   });
-  console.log(id, data);
+  const [messages, setMessages] = useState<Message[]>(data?.messages || []); // Initialize with data.messages
   const { values, handleChange, resetForm } = useForm({ content: "" });
   const [sendMessage] = useMutation(SEND_MESSAGE);
 
@@ -30,17 +30,19 @@ const Chat: React.FC = () => {
         };
       },
     });
-
+    setMessages(data?.messages || []); // Update messages when data changes
     return () => unsubscribe();
-  }, [id, subscribeToMore]);
+  }, [id, subscribeToMore, data]); // Added data to dependencies
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await sendMessage({
+      const { data: sendData } = await sendMessage({
+        // Capture the response
         variables: { conversationId: id, content: values.content },
       });
       resetForm();
+      setMessages([...messages, sendData.sendMessage]); // Use sendData
     } catch (err) {
       console.error("Error sending message:", err);
     }
@@ -54,18 +56,19 @@ const Chat: React.FC = () => {
     <div className="flex flex-col h-[calc(100vh-16rem)]">
       <h1 className="text-3xl font-bold mb-4 dark:text-white">Chat</h1>
       <div className="flex-grow overflow-y-auto mb-4 space-y-4">
-        {data.messages.map((message: Message) => (
-          <div
-            key={message.id}
-            className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-600 dark:text-white"
-          >
-            <p className="font-bold">{message.sender.username}</p>
-            <p>{message.content}</p>
-            <p className="text-sm text-gray-500">
-              {new Date(parseInt(message.createdAt)).toLocaleString()}
-            </p>
-          </div>
-        ))}
+        {messages &&
+          messages.map((message: Message) => (
+            <div
+              key={message.id}
+              className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-600 dark:text-white"
+            >
+              <p className="font-bold">{message.sender.username}</p>
+              <p>{message.content}</p>
+              <p className="text-sm text-gray-500">
+                {new Date(parseInt(message.createdAt)).toLocaleString()}
+              </p>
+            </div>
+          ))}
       </div>
       <form onSubmit={handleSubmit} className="mt-auto">
         <input

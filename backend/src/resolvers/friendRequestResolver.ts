@@ -14,10 +14,42 @@ const friendRequestResolver: IResolvers = {
   },
   Mutation: {
     sendFriendRequest: async (_, { receiverId }, { prisma, user }: Context) => {
-      if (!user) throw new AuthenticationError("Not authenticated");
-      if (user.id === receiverId)
-        throw new UserInputError("Cannot send friend request to yourself");
+      if (!user) {
+        throw new AuthenticationError(
+          "You must be logged in to send a friend request"
+        );
+      }
 
+      if (user.id === receiverId) {
+        throw new UserInputError(
+          "You cannot send a friend request to yourself"
+        );
+      }
+
+      const receiver = await prisma.user.findUnique({
+        where: { id: receiverId },
+      });
+      if (!receiver) {
+        throw new UserInputError("Receiver not found");
+      }
+
+      // Check if they are already friends
+      const areFriends = await prisma.user.findFirst({
+        where: {
+          id: user.id,
+          friends: {
+            some: {
+              id: receiverId,
+            },
+          },
+        },
+      });
+
+      if (areFriends) {
+        throw new UserInputError("You are already friends with this user");
+      }
+
+      // Check for existing friend requests
       const existingRequest = await prisma.friendRequest.findFirst({
         where: {
           OR: [
@@ -27,13 +59,34 @@ const friendRequestResolver: IResolvers = {
         },
       });
 
-      if (existingRequest)
-        throw new UserInputError("Friend request already exists");
+      if (existingRequest) {
+        throw new UserInputError(
+          "A friend request already exists between these users"
+        );
+      }
 
-      return prisma.friendRequest.create({
-        data: { senderId: user.id, receiverId },
-        include: { sender: true, receiver: true },
+      // Create the friend request
+      const friendRequest = await prisma.friendRequest.create({
+        data: {
+          sender: { connect: { id: user.id } },
+          receiver: { connect: { id: receiverId } },
+        },
+        include: {
+          sender: true,
+          receiver: true,
+        },
       });
+
+      // Create a notification for the receiver
+      await prisma.notification.create({
+        data: {
+          type: "FRIEND_REQUEST",
+          content: `${user.username} sent you a friend request`,
+          userId: receiverId,
+        },
+      });
+
+      return friendRequest;
     },
     respondToFriendRequest: async (
       _,
