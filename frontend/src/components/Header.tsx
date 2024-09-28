@@ -8,31 +8,28 @@ const Header: React.FC = () => {
   const { isAuthenticated } = useAuth();
 
   return (
-    <header
-      style={{ backgroundColor: "var(--color-accent)" }}
-      className="text-white p-4"
-    >
+    <header className=" p-4 dark:text-white bg-blue-500">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div className="flex justify-between items-center py-6 md:justify-start md:space-x-10">
+        <div className="flex justify-between items-center py-6 md:justify-start md:space-x-10 text-white">
           <div className="flex justify-start lg:w-0 lg:flex-1">
             <DarkModeToggle />
           </div>
           <nav className="hidden md:flex space-x-10">
             <Link
               to="/"
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="text-base font-medium text-gray-200 hover:text-gray-900"
             >
               Home
             </Link>
             <Link
               to="/profile"
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="text-base font-medium text-gray-200 hover:text-gray-900"
             >
               Profile
             </Link>
             <Link
               to="/conversations"
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="text-base font-medium text-gray-200 hover:text-gray-900"
             >
               Conversations
             </Link>
@@ -44,19 +41,19 @@ const Header: React.FC = () => {
             </Link> */}
             <Link
               to="/friends"
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="text-base font-medium text-gray-200 hover:text-gray-900"
             >
               Friends
             </Link>
             <Link
               to="/find-friends"
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="text-base font-medium text-gray-200 hover:text-gray-900"
             >
               Find Friends
             </Link>
             <Link
               to="/friend-requests"
-              className="text-base font-medium text-gray-500 hover:text-gray-900"
+              className="text-base font-medium text-gray-200 hover:text-gray-900"
             >
               Friend Requests
             </Link>
@@ -72,7 +69,7 @@ const Header: React.FC = () => {
             ) : (
               <Link
                 to="/login"
-                className="whitespace-nowrap text-base font-medium text-gray-500 hover:text-gray-900"
+                className="whitespace-nowrap text-base font-medium text-gray-100 bold hover:text-gray-900"
               >
                 Sign in
               </Link>

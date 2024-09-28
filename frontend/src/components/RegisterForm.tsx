@@ -29,7 +29,7 @@ const RegisterForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto dark:text-white">
       <h2 className="text-2xl font-bold mb-4">Register</h2>
       <div className="mb-4">
         <label htmlFor="username" className="block mb-2">

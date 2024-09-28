@@ -23,7 +23,7 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto dark:text-white">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
       <div className="mb-4">
         <label htmlFor="email" className="block mb-2">
@@ -54,13 +54,21 @@ const LoginForm: React.FC = () => {
         />
       </div>
       {error && <p className="text-red-500 mb-4">{error.message}</p>}
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-500 text-white px-4 py-2 rounded"
-      >
-        {loading ? "Logging in..." : "Login"}
-      </button>
+      <div className="flex justify-between">
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded "
+          onClick={() => navigate("/register")}
+        >
+          Register
+        </button>
+      </div>
     </form>
   );
 };
