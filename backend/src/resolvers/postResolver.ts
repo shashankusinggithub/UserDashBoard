@@ -15,13 +15,11 @@ const postResolver: IResolvers = {
 
       const posts = await prisma.post.findMany({
         include: { author: true, comments: true, likes: true },
+        orderBy: { createdAt: "desc" },
       });
-      const modifiedPosts = posts.map((post) => ({
-        ...post,
-        likedByMe: post.likes.some((like) => like.userId === user.id), // Check if the current user liked the post
-      }));
-      await redis.set("all_posts", JSON.stringify(modifiedPosts), "EX", 3600);
-      return modifiedPosts;
+
+      await redis.set("all_posts", JSON.stringify(posts), "EX", 3600);
+      return posts;
     },
     post: async (_, { id }, { prisma, user }: Context) => {
       if (!user) throw new AuthenticationError("Not authenticated");
@@ -31,19 +29,14 @@ const postResolver: IResolvers = {
       });
       return {
         ...post,
-        likedByMe: post?.likes.some((like) => like.userId === user.id),
       };
     },
     userPosts: async (_, { userId }, { prisma, user }: Context) => {
       if (!user) throw new AuthenticationError("Not authenticated");
-      const posts = await prisma.post.findMany({
+      return prisma.post.findMany({
         where: { authorId: userId },
         include: { author: true, comments: true, likes: true },
       });
-      return posts.map((post) => ({
-        ...post,
-        likedByMe: post.likes.some((like) => like.userId === user.id),
-      }));
     },
   },
   Mutation: {
@@ -97,6 +90,9 @@ const postResolver: IResolvers = {
             userId: friendId,
           })),
         });
+        // Clear Redis cache for posts
+
+        await redis.del("all_posts");
 
         return newPost;
       } catch (error) {

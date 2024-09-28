@@ -44,7 +44,6 @@ const typeDefs = gql`
     updatedAt: String
     comments: [Comment]
     likes: [Like]
-    likedByMe: Boolean!
   }
 
   type Comment {

@@ -12,11 +12,11 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { setContext } from "@apollo/client/link/context";
 
 const httpLink = new HttpLink({
-  uri: "https://" + process.env.REACT_APP_BACK_END_URL,
+  uri: "http://" + process.env.REACT_APP_BACK_END_URL,
 });
 
 const wsLink = new WebSocketLink({
-  uri: `wss://` + process.env.REACT_APP_BACK_END_URL,
+  uri: `ws://` + process.env.REACT_APP_BACK_END_URL,
   options: {
     reconnect: true,
     connectionParams: () => {

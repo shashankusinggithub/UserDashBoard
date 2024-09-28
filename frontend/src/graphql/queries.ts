@@ -13,7 +13,6 @@ export const GET_POSTS = gql`
       likes {
         id
       }
-      likedByMe
     }
   }
 `;
@@ -39,7 +38,7 @@ export const GET_MESSAGES = gql`
       id
       content
       sender {
-        username
+        id
       }
       createdAt
     }

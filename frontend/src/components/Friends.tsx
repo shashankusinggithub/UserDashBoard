@@ -12,7 +12,7 @@ const Friends: React.FC = () => {
   const navigate = useNavigate();
   const handleStartChat = async (friendId: string) => {
     try {
-      console.log([friendId]);
+      console.log([friendId], "friendId");
       const { data } = await createConversation({
         variables: { participantIds: [friendId] },
       });

@@ -129,6 +129,7 @@ const userResolvers: IResolvers<any, Context> = {
     },
     googleSignIn: async (parent, { token }, { prisma }) => {
       const user = await verifyGoogleToken(token);
+      console.log(user);
       const existingUser = await prisma.user.findUnique({
         where: { email: user.email },
       });

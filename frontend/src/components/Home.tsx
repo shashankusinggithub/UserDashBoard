@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery } from "@apollo/client";
+import { useQuery, useSubscription } from "@apollo/client";
 import { GET_POSTS } from "../graphql/queries";
 import PostForm from "./PostForm";
 import { Post } from "../types";
@@ -7,7 +7,7 @@ import { handleError } from "../utils/error-handling";
 import PostCard from "./PostCard";
 
 const Home: React.FC = () => {
-  const { loading, error, data } = useQuery(GET_POSTS);
+  const { loading, error, data, subscribeToMore } = useQuery(GET_POSTS);
   console.log(data);
 
   if (loading) return <div className="text-center">Loading posts...</div>;
