@@ -16,7 +16,7 @@ const httpLink = new HttpLink({
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://` + process.env.REACT_APP_BACK_END_URL,
+  uri: `wss://` + process.env.REACT_APP_BACK_END_URL,
   options: {
     reconnect: true,
     connectionParams: () => {

@@ -16,18 +16,14 @@ interface AppUser {
 
 export async function verifyGoogleToken(token: string): Promise<GoogleUser> {
   try {
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-    const payload = ticket.getPayload();
-    if (!payload) {
-      throw new Error("Invalid Google token payload");
+    const ticket = await client.getTokenInfo(token);
+    if (!ticket || !ticket.email) {
+      throw new Error("Invalid Google token");
     }
     return {
-      email: payload.email!,
-      name: payload.name!,
-      picture: payload.picture!,
+      email: ticket.email,
+      name: ticket.email_verified ? ticket.email.split("@")[0] : "",
+      picture: "",
     };
   } catch (error) {
     console.error("Error verifying Google token:", error);
@@ -36,7 +32,10 @@ export async function verifyGoogleToken(token: string): Promise<GoogleUser> {
 }
 
 export function generateJwtToken(user: AppUser): string {
-  return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET!, {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not defined in environment variables");
+  }
+  return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, {
     expiresIn: "1d",
   });
 }
