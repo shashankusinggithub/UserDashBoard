@@ -1,0 +1,21 @@
+
+:root {
+    --color-bg-primary: #ffffff;
+    --color-bg-secondary: #f3f4f6;
+    --color-text-primary: #1f2937;
+    --color-text-secondary: #4b5563;
+    --color-accent: #3b82f6;
+  }
+  
+  [data-theme="dark"] {
+    --color-bg-primary: #1f2937;
+    --color-bg-secondary: #111827;
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+    --color-accent: #60a5fa;
+  }
+  
+  body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+  }

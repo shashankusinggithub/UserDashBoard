@@ -1,26 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { ApolloProvider } from "@apollo/client";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { client } from "./utils/apollo-client";
 
-function App() {
+import Header from "./components/Header";
+import Home from "./components/Home";
+import Profile from "./components/Profile";
+import Conversations from "./components/Conversations";
+import Chat from "./components/Chat";
+import Friends from "./components/Friends";
+import Notifications from "./components/Notifications";
+import LoginForm from "./components/LoginForm";
+import RegisterForm from "./components/RegisterForm";
+import FindFriends from "./components/FindFriends";
+import FriendRequest from "./components/FriendRequest";
+import ProfileEdit from "./components/ProfileEdit";
+import { DarkModeProvider } from "./context/DarkModeContext";
+import "./styles/global.css"; // Import the global CSS
+
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ApolloProvider client={client}>
+      <AuthProvider client={client}>
+        <DarkModeProvider>
+          <Router>
+            <div className="min-h-screen dark:bg-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-grey ">
+              <Header />
+              <main className="container dark:bg-gray-800 bg-gray-100 mx-auto mt-4 p-4 ">
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/conversations" element={<Conversations />} />
+                  <Route path="/conversations/:id" element={<Chat />} />
+                  <Route path="/friends" element={<Friends />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/login" element={<LoginForm />} />
+                  <Route path="/register" element={<RegisterForm />} />
+                  <Route path="/find-friends" element={<FindFriends />} />
+                  <Route path="/friend-requests" element={<FriendRequest />} />
+                  <Route path="/profile-edit" element={<ProfileEdit />} />
+                </Routes>
+              </main>
+            </div>
+          </Router>
+        </DarkModeProvider>
+      </AuthProvider>
+    </ApolloProvider>
   );
-}
+};
 
 export default App;
