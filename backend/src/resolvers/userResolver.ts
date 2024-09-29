@@ -146,9 +146,8 @@ const userResolvers: IResolvers<any, Context> = {
           profilePicture: user.picture,
         },
       });
-      console.log(newUser);
 
-      return { accessToken, newUser };
+      return { token: accessToken, user: newUser };
     },
     login: async (parent, { email, password }, { prisma }) => {
       const user = await prisma.user.findUnique({ where: { email } });
