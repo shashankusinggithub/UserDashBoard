@@ -134,7 +134,8 @@ const userResolvers: IResolvers<any, Context> = {
         where: { email: user.email },
       });
       if (existingUser) {
-        return { accessToken, user: existingUser };
+        const token = generateJwtToken(existingUser);
+        return { token, user: existingUser };
       }
       const newUser = await prisma.user.create({
         data: {
@@ -146,8 +147,8 @@ const userResolvers: IResolvers<any, Context> = {
           profilePicture: user.picture,
         },
       });
-
-      return { token: accessToken, user: newUser };
+      const token = generateJwtToken(newUser);
+      return { token, user: newUser };
     },
     login: async (parent, { email, password }, { prisma }) => {
       const user = await prisma.user.findUnique({ where: { email } });
