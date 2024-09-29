@@ -3,7 +3,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { ApolloClient } from "@apollo/client";
 import { resetApolloCache } from "../utils/apollo-client";
-import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -28,7 +27,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   children,
   client,
 }) => {
-  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
@@ -46,7 +44,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     localStorage.setItem("user", JSON.stringify(user));
     setIsAuthenticated(true);
     setUser(user);
-    navigate("/");
   };
 
   const logout = () => {
@@ -55,7 +52,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
     setIsAuthenticated(false);
     setUser(null);
     resetApolloCache();
-    navigate("/login");
   };
 
   return (
