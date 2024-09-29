@@ -62,106 +62,112 @@ const Header: React.FC = () => {
           }`}
           id="navbar-sticky"
         >
-          <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            <li>
-              <Link
-                to="/"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/profile"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Profile
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/conversations"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Conversations
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/friends"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Friends
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/find-friends"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Find Friends
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/friend-requests"
-                className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-              >
-                Friend Requests
-              </Link>
-            </li>
-          </ul>
+          {user && (
+            <div className={`min-sm:hidden ${isMenuOpen ? "z-30" : "z-0"}`}>
+              <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+                <li>
+                  <Link
+                    to="/"
+                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/profile"
+                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  >
+                    Profile
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/conversations"
+                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  >
+                    Conversations
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/friends"
+                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  >
+                    Friends
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/find-friends"
+                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  >
+                    Find Friends
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/friend-requests"
+                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                  >
+                    Friend Requests
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </div>
       {/* Mobile menu links */}
-      {isMenuOpen && (
-        <div className="md:hidden">
+      <div className="md:hidden">
+        {isMenuOpen && (
           <nav className="flex flex-col space-y-2 p-4 bg-gray-500">
-            <Link
-              to="/"
-              className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-            >
-              Home
-            </Link>
-            <Link
-              to="/profile"
-              className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-            >
-              Profile
-            </Link>
-            <Link
-              to="/conversations"
-              className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-            >
-              Conversations
-            </Link>
-            <Link
-              to="/friends"
-              className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-            >
-              Friends
-            </Link>
-            <Link
-              to="/find-friends"
-              className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-            >
-              Find Friends
-            </Link>
-            <Link
-              to="/friend-requests"
-              className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-            >
-              Friend Requests
-            </Link>
+            {user ? ( // Show mobile links only if user is logged in
+              <>
+                <Link
+                  to="/"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/profile"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/conversations"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                >
+                  Conversations
+                </Link>
+                <Link
+                  to="/friends"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                >
+                  Friends
+                </Link>
+                <Link
+                  to="/find-friends"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                >
+                  Find Friends
+                </Link>
+                <Link
+                  to="/friend-requests"
+                  className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                >
+                  Friend Requests
+                </Link>
 
-            {user ? (
-              <button
-                onClick={logout}
-                className=" w-full items-center px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg"
-              >
-                Logout
-              </button>
+                <button
+                  onClick={logout}
+                  className=" w-full items-center px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg"
+                >
+                  Logout
+                </button>
+              </>
             ) : (
               <Link
                 to="/login"
@@ -171,8 +177,8 @@ const Header: React.FC = () => {
               </Link>
             )}
           </nav>
-        </div>
-      )}
+        )}
+      </div>
     </nav>
   );
 };

@@ -47,11 +47,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setIsAuthenticated(false);
-    setUser(null);
-    resetApolloCache();
+    try {
+      console.log("Logging out");
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      setIsAuthenticated(false);
+      setUser(null);
+      resetApolloCache();
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
   };
 
   return (
