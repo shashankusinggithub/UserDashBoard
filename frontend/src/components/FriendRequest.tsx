@@ -46,9 +46,13 @@ const FriendRequests: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">Friend Requests</h2>
+      <h2 className="text-2xl font-bold mb-4 dark:text-white">
+        Friend Requests
+      </h2>
       {pendingRequests.length === 0 ? (
-        <p>No pending friend requests.</p>
+        <p className="text-center dark:text-white">
+          No pending friend requests.
+        </p>
       ) : (
         <div className="space-y-4">
           {pendingRequests.map((request: FriendRequest) => (

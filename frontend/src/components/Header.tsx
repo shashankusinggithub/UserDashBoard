@@ -127,36 +127,42 @@ const Header: React.FC = () => {
                 <Link
                   to="/"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Home
                 </Link>
                 <Link
                   to="/profile"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Profile
                 </Link>
                 <Link
                   to="/conversations"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Conversations
                 </Link>
                 <Link
                   to="/friends"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Friends
                 </Link>
                 <Link
                   to="/find-friends"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Find Friends
                 </Link>
                 <Link
                   to="/friend-requests"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  onClick={() => setIsMenuOpen(false)}
                 >
                   Friend Requests
                 </Link>

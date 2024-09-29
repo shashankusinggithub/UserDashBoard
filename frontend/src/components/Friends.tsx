@@ -41,7 +41,7 @@ const Friends: React.FC = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold mb-4">Friends</h1>
+      <h1 className="text-3xl font-bold mb-4 dark:text-white">Friends</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {data.me.friends?.map((friend: User) => (
           <div key={friend.id} className="bg-white p-4 rounded-lg shadow-md">
