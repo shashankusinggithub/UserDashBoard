@@ -127,14 +127,14 @@ const userResolvers: IResolvers<any, Context> = {
       const token = generateToken(user.id);
       return { token, user };
     },
-    googleSignIn: async (parent, { token }, { prisma }) => {
-      const user = await verifyGoogleToken(token);
+    googleSignIn: async (parent, { accessToken }, { prisma }) => {
+      const user = await verifyGoogleToken(accessToken);
       console.log(user);
       const existingUser = await prisma.user.findUnique({
         where: { email: user.email },
       });
       if (existingUser) {
-        return { token, user: existingUser };
+        return { accessToken, user: existingUser };
       }
       const newUser = await prisma.user.create({
         data: {
@@ -146,8 +146,9 @@ const userResolvers: IResolvers<any, Context> = {
           profilePicture: user.picture,
         },
       });
+      console.log(newUser);
 
-      return { token, newUser };
+      return { accessToken, newUser };
     },
     login: async (parent, { email, password }, { prisma }) => {
       const user = await prisma.user.findUnique({ where: { email } });

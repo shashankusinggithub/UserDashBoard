@@ -156,8 +156,6 @@ export const GOOGLE_SIGN_IN = gql`
     googleSignIn(accessToken: $accessToken) {
       token
       user {
-        id
-        username
         email
       }
     }

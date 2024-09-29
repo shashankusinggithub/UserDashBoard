@@ -126,7 +126,7 @@ const typeDefs = gql`
     createConversation(participantIds: [ID!]!): Conversation!
     sendMessage(conversationId: ID!, content: String!): Message!
     updateProfilePicture(base64Image: String!): User
-    googleSignIn(token: String!): AuthPayload!
+    googleSignIn(accessToken: String!): AuthPayload!
   }
 
   type Subscription {
