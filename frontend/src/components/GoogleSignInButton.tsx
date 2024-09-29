@@ -3,11 +3,11 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { useMutation } from "@apollo/client";
 import { GOOGLE_SIGN_IN } from "../graphql/mutations";
 import { useAuth } from "../hooks/useAuth";
-
+import { useNavigate } from "react-router-dom";
 const GoogleSignInButton: React.FC = () => {
   const { login } = useAuth();
   const [googleSignIn] = useMutation(GOOGLE_SIGN_IN);
-
+  const navigate = useNavigate();
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {
@@ -16,6 +16,7 @@ const GoogleSignInButton: React.FC = () => {
         });
         if (data && data.googleSignIn) {
           login(data.googleSignIn.token, data.googleSignIn.user);
+          navigate("/");
         }
       } catch (error) {
         console.error("Google Sign-In Error:", error);
