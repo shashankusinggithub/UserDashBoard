@@ -17,7 +17,6 @@ const ProfileEdit: React.FC = () => {
     lastName: "",
     bio: "",
   });
-  console.log(data);
   React.useEffect(() => {
     if (data?.me) {
       setValues({

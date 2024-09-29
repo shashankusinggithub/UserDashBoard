@@ -31,7 +31,7 @@ const App: React.FC = () => {
             <Router>
               <div className="min-h-screen dark:bg-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-grey ">
                 <Header />
-                <main className="container dark:bg-gray-800 bg-gray-100 mx-auto mt-16 p-4 ">
+                <main className="container dark:bg-gray-800 bg-gray-100 mx-auto mt-16 p-4 border ">
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/profile" element={<Profile />} />

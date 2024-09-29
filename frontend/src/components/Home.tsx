@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery, useSubscription } from "@apollo/client";
-import { GET_POSTS } from "../graphql/queries";
+import { GET_POSTS, NEW_POST_SUBSCRIPTION } from "../graphql/queries";
 import PostForm from "./PostForm";
 import { Post } from "../types";
 import { handleError } from "../utils/error-handling";
@@ -8,11 +8,32 @@ import PostCard from "./PostCard";
 
 const Home: React.FC = () => {
   const { loading, error, data, subscribeToMore } = useQuery(GET_POSTS);
-  console.log(data);
 
-  if (loading) return <div className="text-center">Loading posts...</div>;
+  useEffect(() => {
+    const unsubscribe = subscribeToMore({
+      document: NEW_POST_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newPost = subscriptionData.data.newPost;
+        return {
+          ...prev,
+          posts: [newPost, ...prev.posts],
+        };
+      },
+      onError: (error) => {
+        console.error("Subscription error:", error);
+      },
+    });
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [subscribeToMore]);
+
+  if (loading) return <div>Loading posts...</div>;
   if (error)
     return <div className="text-center text-red-500">{handleError(error)}</div>;
+
   return (
     <div className="dark:bg-gray-800 bg-gray-100">
       <h1 className="text-3xl font-bold mb-4 dark:text-white">News Feed</h1>

@@ -23,3 +23,17 @@ export const NEW_NOTIFICATION_SUBSCRIPTION = gql`
     }
   }
 `;
+
+export const NEW_POST_SUBSCRIPTION = gql`
+  subscription OnNewPost {
+    newPost {
+      id
+      content
+      author {
+        id
+        username
+      }
+      createdAt
+    }
+  }
+`;

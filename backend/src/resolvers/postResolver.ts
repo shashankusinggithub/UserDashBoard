@@ -52,7 +52,6 @@ const postResolver: IResolvers = {
       if (content && content.length > 500) {
         throw new UserInputError("Post content must be 500 characters or less");
       }
-      console.log(user);
 
       try {
         const newPost = await prisma.post.create({
@@ -126,6 +125,22 @@ const postResolver: IResolvers = {
         data: { likes: { create: { userId: user.id } } },
         include: { author: true },
       });
+    },
+  },
+
+  Subscription: {
+    newPost: {
+      subscribe: () => {
+        try {
+          return pubsub.asyncIterator(["NEW_POST"]);
+        } catch (error) {
+          console.error("Error setting up newPost subscription:", error);
+          throw new Error("Failed to set up subscription");
+        }
+      },
+      resolve: (payload) => {
+        return payload.newPost;
+      },
     },
   },
 };

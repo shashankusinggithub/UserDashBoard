@@ -44,6 +44,7 @@ export const SEND_MESSAGE = gql`
       id
       content
       sender {
+        id
         username
       }
       createdAt

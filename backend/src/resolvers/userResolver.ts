@@ -113,7 +113,6 @@ const userResolvers: IResolvers<any, Context> = {
       if (existingUser) {
         throw new UserInputError("Username or email already taken");
       }
-      console.log(firstName, lastName);
       const hashedPassword = await hashPassword(password);
       const user = await prisma.user.create({
         data: {
@@ -129,7 +128,6 @@ const userResolvers: IResolvers<any, Context> = {
     },
     googleSignIn: async (parent, { accessToken }, { prisma }) => {
       const user = await verifyGoogleToken(accessToken);
-      console.log(user);
       const existingUser = await prisma.user.findUnique({
         where: { email: user.email },
       });
@@ -174,7 +172,6 @@ const userResolvers: IResolvers<any, Context> = {
       if (!user) {
         throw new AuthenticationError("User not authenticated");
       }
-      console.log(firstName, lastName, bio);
       const updatedUser = await prisma.user.update({
         where: { id: user.id },
         data: { firstName, lastName, bio },

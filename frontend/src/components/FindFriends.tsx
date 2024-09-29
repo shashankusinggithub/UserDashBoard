@@ -23,7 +23,6 @@ const FindFriends: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     searchUsers({ variables: values });
-    console.log(searchData);
   };
 
   const handleSendFriendRequest = async (userId: string) => {

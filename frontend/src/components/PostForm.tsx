@@ -22,7 +22,6 @@ const PostForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(values);
     try {
       await createPost({ variables: values });
     } catch (err) {

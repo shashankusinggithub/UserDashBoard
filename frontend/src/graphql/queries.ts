@@ -31,6 +31,20 @@ export const GET_CONVERSATIONS = gql`
     }
   }
 `;
+export const NEW_POST_SUBSCRIPTION = gql`
+  subscription NewPostSubscription {
+    newPost {
+      id
+      content
+      author {
+        id
+        username
+        profilePicture
+      }
+      createdAt
+    }
+  }
+`;
 
 export const GET_MESSAGES = gql`
   query GetMessages($conversationId: ID!) {
@@ -39,6 +53,7 @@ export const GET_MESSAGES = gql`
       content
       sender {
         id
+        username
       }
       createdAt
     }
