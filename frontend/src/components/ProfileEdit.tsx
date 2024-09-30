@@ -4,6 +4,7 @@ import { UPDATE_PROFILE, UPDATE_PROFILE_PICTURE } from "../graphql/mutations";
 import { GET_USER_PROFILE } from "../graphql/queries";
 import { useForm } from "../hooks/useForm";
 import { handleError } from "../utils/error-handling";
+import Avatar from "../assests/default-avatar.png";
 
 const ProfileEdit: React.FC = () => {
   const { loading, error, data } = useQuery(GET_USER_PROFILE);
@@ -75,7 +76,7 @@ const ProfileEdit: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Edit Profile</h1>
+      <h1 className="text-3xl font-bold mb-4 dark:text-white">Edit Profile</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="firstName" className="block mb-1">
@@ -125,10 +126,16 @@ const ProfileEdit: React.FC = () => {
       </form>
 
       <div className="mt-8">
-        <h2 className="text-2xl font-bold mb-4">Update Profile Picture</h2>
+        <h2 className="text-2xl font-bold mb-4 dark:text-white">
+          Update Profile Picture
+        </h2>
         <div className="flex items-center space-x-4">
           <img
-            src={previewUrl || data.me.profilePicture || "/default-avatar.png"}
+            src={
+              previewUrl ||
+              `data:image/jpeg;base64,${data.me.profilePicture}` ||
+              Avatar
+            }
             alt="Profile"
             className="w-32 h-32 rounded-full object-cover"
           />
@@ -137,7 +144,7 @@ const ProfileEdit: React.FC = () => {
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className="mb-2"
+              className="mb-2 dark:text-white"
             />
             <button
               onClick={handleUpload}

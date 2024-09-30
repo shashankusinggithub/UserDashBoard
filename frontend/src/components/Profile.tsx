@@ -21,7 +21,8 @@ const Profile = () => {
       <h1 className="text-3xl font-bold mb-4">Profile</h1>
       <img
         src={
-          `data:image/jpeg;base64,${me.profilePicture}` ||
+          (me.profilePicture &&
+            `data:image/jpeg;base64,${me.profilePicture}`) ||
           "https://via.placeholder.com/150"
         }
         alt="Profile"

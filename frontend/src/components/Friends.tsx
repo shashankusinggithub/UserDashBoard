@@ -8,6 +8,7 @@ import {
   REMOVE_FRIEND,
 } from "../graphql/mutations";
 import { useNavigate } from "react-router-dom";
+import Avatar from "../assests/default-avatar.png";
 
 const FriendCard: React.FC<{
   friend: User;
@@ -17,7 +18,11 @@ const FriendCard: React.FC<{
   <div className="bg-white p-6 rounded-lg shadow-lg transition-transform transform hover:scale-105">
     <div className="flex items-center space-x-3">
       <img
-        src={friend.profilePicture || "/default-avatar.png"}
+        src={
+          (friend.profilePicture &&
+            `data:image/jpeg;base64,${friend.profilePicture}`) ||
+          Avatar
+        }
         alt={`${friend.username}'s avatar`}
         className="w-10 h-10 rounded-full mr-4"
       />

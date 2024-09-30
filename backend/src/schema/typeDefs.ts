@@ -29,7 +29,7 @@ const typeDefs = gql`
 
   type Conversation {
     id: ID!
-    participants: [User!]!
+    participants: [ConversationParticipant!]!
     messages: [Message!]!
     lastMessage: Message
     updatedAt: String!
@@ -96,6 +96,11 @@ const typeDefs = gql`
     createdAt: String!
   }
 
+  type ConversationParticipant {
+    id: ID!
+    user: User!
+  }
+
   type AuthPayload {
     token: String!
     user: User!
@@ -158,6 +163,7 @@ const typeDefs = gql`
     newNotification: Notification
   }
   type Analytics {
+    fullname: String
     lastLoginTime: String
     totalFriends: Int
     totalPosts: Int

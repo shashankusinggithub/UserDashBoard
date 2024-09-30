@@ -9,6 +9,7 @@ import {
 } from "../graphql/mutations";
 import { FriendRequest } from "../types";
 import { handleError } from "../utils/error-handling";
+import Avatar from "../assests/default-avatar.png";
 
 const FriendRequests: React.FC = () => {
   const { loading, error, data, refetch } = useQuery(GET_FRIEND_REQUESTS);
@@ -62,7 +63,11 @@ const FriendRequests: React.FC = () => {
             >
               <div className="flex items-center">
                 <img
-                  src={request.sender.profilePicture || "/default-avatar.png"}
+                  src={
+                    (request.sender.profilePicture &&
+                      `data:image/jpeg;base64,${request.sender.profilePicture}`) ||
+                    Avatar
+                  }
                   alt={`${request.sender.username}'s avatar`}
                   className="w-10 h-10 rounded-full mr-4"
                 />

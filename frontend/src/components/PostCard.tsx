@@ -4,6 +4,7 @@ import React from "react";
 import { useMutation } from "@apollo/client";
 import { Post } from "../types";
 import { formatDistanceToNow } from "date-fns";
+import Avatar from "../assests/default-avatar.png";
 
 interface PostCardProps {
   post: Post;
@@ -15,8 +16,9 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
       <div className="flex items-center mb-4">
         <img
           src={
-            `data:image/jpeg;base64,${post.author.profilePicture}` ||
-            "/default-avatar.png"
+            (post.author.profilePicture &&
+              `data:image/jpeg;base64,${post.author.profilePicture}`) ||
+            Avatar
           }
           alt={post.author.username}
           className="w-10 h-10 rounded-full mr-4"

@@ -4,10 +4,12 @@ import { Link } from "react-router-dom";
 import { GET_CONVERSATIONS } from "../graphql/queries";
 import { Conversation } from "../types";
 import { handleError } from "../utils/error-handling";
+import { useAuth } from "../hooks/useAuth";
 
 const Conversations: React.FC = () => {
   const { loading, error, data } = useQuery(GET_CONVERSATIONS);
-
+  const { user } = useAuth();
+  console.log(data);
   if (loading)
     return <div className="text-center">Loading conversations...</div>;
   if (error)
@@ -25,7 +27,9 @@ const Conversations: React.FC = () => {
           >
             <div className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow dark:bg-gray-700 dark:text-white">
               <p className="font-bold">
-                {conversation.participants.map((p) => p.username).join(", ")}
+                {conversation.participants
+                  .map((p) => p.user.username)
+                  .join(", ")}
               </p>
               {conversation.lastMessage && (
                 <>

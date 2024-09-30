@@ -110,6 +110,7 @@ const userResolvers: IResolvers<any, Context> = {
       );
 
       return {
+        fullname: userData.firstName + userData.lastName,
         lastLoginTime: userData.lastLoginTime.toISOString(),
         totalFriends: userData.friends.length,
         totalPosts: userData.posts.length,

@@ -53,7 +53,7 @@ export interface Message {
 
 export interface Conversation {
   id: string;
-  participants: User[];
+  participants: { user: User }[];
   messages: Message[];
   lastMessage?: Message;
   updatedAt: string;

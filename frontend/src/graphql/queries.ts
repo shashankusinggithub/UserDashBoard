@@ -23,11 +23,49 @@ export const GET_CONVERSATIONS = gql`
       id
       participants {
         id
+        user {
+          id
+          username
+          profilePicture
+        }
       }
       lastMessage {
+        id
         content
         createdAt
+        sender {
+          id
+          username
+        }
       }
+      updatedAt
+    }
+  }
+`;
+
+export const GET_CONVERSATION = gql`
+  query GetConversation($id: ID!) {
+    conversation(id: $id) {
+      id
+      participants {
+        id
+        user {
+          id
+          username
+          profilePicture
+        }
+      }
+      messages {
+        id
+        content
+        createdAt
+        sender {
+          id
+          username
+          profilePicture
+        }
+      }
+      updatedAt
     }
   }
 `;
@@ -63,6 +101,7 @@ export const GET_MESSAGES = gql`
 export const GET_USER_ANALYTICS = gql`
   query GetUserAnalytics {
     getUserAnalytics {
+      fullname
       lastLoginTime
       totalFriends
       totalPosts

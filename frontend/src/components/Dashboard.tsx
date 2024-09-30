@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client";
 import { GET_USER_ANALYTICS, GET_FRIENDS_LIST } from "../graphql/queries";
 import { format } from "date-fns";
 import { User } from "../types";
+import Image from "../assests/default-avatar.png";
 
 const Dashboard: React.FC = () => {
   const {
@@ -24,11 +25,12 @@ const Dashboard: React.FC = () => {
   if (friendsError)
     return <p>Error loading friends list: {friendsError.message}</p>;
 
-  const { lastLoginTime, totalFriends, totalPosts, totalLikes } =
+  const { lastLoginTime, totalFriends, totalPosts, totalLikes, fullname } =
     analyticsData.getUserAnalytics;
-
+  console.log(friendsData);
   return (
-    <div className="my-8">
+    <div className="my-8 w-full">
+      <h2 className="dark:text-white mb-6 text-xl ">Welcome {fullname} </h2>
       <h1 className="text-3xl font-bold mb-6 dark:text-white">Dashboard</h1>
       <div className="mx-auto max-w-4xl">
         <div className="bg-white shadow rounded-lg  p-6 mb-6 ">
@@ -45,7 +47,11 @@ const Dashboard: React.FC = () => {
             {friendsData.getFriendsList.map((friend: User) => (
               <div key={friend.id} className="flex items-center space-x-3">
                 <img
-                  src={friend.profilePicture || "/default-avatar.png"}
+                  src={
+                    (friend.profilePicture &&
+                      `data:image/jpeg;base64,${friend.profilePicture}`) ||
+                    Image
+                  }
                   alt={`${friend.username}'s avatar`}
                   className="w-10 h-10 rounded-full"
                 />
