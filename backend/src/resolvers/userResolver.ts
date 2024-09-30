@@ -311,7 +311,6 @@ const userResolvers: IResolvers<any, Context> = {
       const userDetails = await prisma.user.findUnique({
         where: { id: user.id },
       });
-      console.log(user);
       if (userDetails.role !== "ADMIN") {
         throw new ForbiddenError("Only admins can update user roles");
       }

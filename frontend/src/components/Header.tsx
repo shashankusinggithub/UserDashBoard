@@ -2,19 +2,24 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import DarkModeToggle from "./DarkModeToggle";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
+
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu
 
   return (
     <nav className="bg-white dark:bg-gray-900 fixed w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <div className="flex items-center space-x-3 rtl:space-x-reverse">
+          <LanguageSwitcher />
           <DarkModeToggle />
           <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-            <Link to="/" className="text-white text-2xl font-bold">
-              MyApp
+            <Link to="/" className="dark:text-white text-2xl font-bold">
+              Home
             </Link>
           </span>
         </div>
@@ -24,14 +29,14 @@ const Header: React.FC = () => {
               onClick={logout}
               className="hidden md:inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg"
             >
-              Logout
+              {t("logout")}
             </button>
           ) : (
             <Link
               to="/login"
               className="hidden md:inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
             >
-              Sign In
+              {t("login")}
             </Link>
           )}
           <button
@@ -87,7 +92,7 @@ const Header: React.FC = () => {
                     to="/profile"
                     className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   >
-                    Profile
+                    {t("profile")}
                   </Link>
                 </li>
                 <li>
@@ -95,7 +100,7 @@ const Header: React.FC = () => {
                     to="/conversations"
                     className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   >
-                    Conversations
+                    {t("conversations")}
                   </Link>
                 </li>
                 <li>
@@ -103,7 +108,7 @@ const Header: React.FC = () => {
                     to="/friends"
                     className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   >
-                    Friends
+                    {t("friends")}
                   </Link>
                 </li>
                 <li>
@@ -193,7 +198,7 @@ const Header: React.FC = () => {
                 to="/login"
                 className="  wi-full  items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
               >
-                Sign In
+                {t("login")}
               </Link>
             )}
           </nav>

@@ -6,6 +6,7 @@ import { GET_USER_ANALYTICS, GET_FRIENDS_LIST } from "../graphql/queries";
 import { format } from "date-fns";
 import { User } from "../types";
 import Image from "../assests/default-avatar.png";
+import { useTranslation } from "react-i18next";
 
 const Dashboard: React.FC = () => {
   const {
@@ -18,6 +19,7 @@ const Dashboard: React.FC = () => {
     error: friendsError,
     data: friendsData,
   } = useQuery(GET_FRIENDS_LIST);
+  const { t } = useTranslation();
 
   if (analyticsLoading || friendsLoading) return <p>Loading...</p>;
   if (analyticsError)
@@ -27,11 +29,14 @@ const Dashboard: React.FC = () => {
 
   const { lastLoginTime, totalFriends, totalPosts, totalLikes, fullname } =
     analyticsData.getUserAnalytics;
-  console.log(friendsData);
   return (
     <div className="my-8 w-full">
-      <h2 className="dark:text-white mb-6 text-xl ">Welcome {fullname} </h2>
-      <h1 className="text-3xl font-bold mb-6 dark:text-white">Dashboard</h1>
+      <h2 className="dark:text-white mb-6 text-xl ">
+        {t("welcome")} {fullname}{" "}
+      </h2>
+      <h1 className="text-3xl font-bold mb-6 dark:text-white">
+        {t("dashboard")}
+      </h1>
       <div className="mx-auto max-w-4xl">
         <div className="bg-white shadow rounded-lg  p-6 mb-6 ">
           <h2 className="text-xl font-semibold mb-4">Analytics</h2>

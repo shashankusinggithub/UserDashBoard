@@ -1,0 +1,18 @@
+{
+  "welcome": "Welcome",
+  "login": "Login",
+  "register": "Register",
+  "logout": "Logout",
+  "dashboard": "Dashboard",
+  "profile": "Profile",
+  "friends": "Friends",
+  "conversations": "Conversations",
+  "loading": "Loading...",
+  "error": {
+    "fetchConversations": "Error fetching conversations",
+    "fetchMessages": "Error fetching messages"
+  },
+  "chat": "Chat",
+  "typeMessage": "Type a message...",
+  "send": "Send"
+}

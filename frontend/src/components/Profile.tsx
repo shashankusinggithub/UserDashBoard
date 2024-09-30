@@ -15,7 +15,6 @@ const Profile = () => {
   if (error) return <p>Error :(</p>;
 
   const { me } = data;
-  console.log(me);
   return (
     <div className="bg-white p-6 rounded-lg shadow-md dark:bg-gray-600 dark:text-white">
       <h1 className="text-3xl font-bold mb-4">Profile</h1>

@@ -1,0 +1,18 @@
+{
+  "welcome": "Bienvenido ",
+  "login": "Iniciar sesión",
+  "register": "Registrarse",
+  "logout": "Cerrar sesión",
+  "dashboard": "Panel de control",
+  "profile": "Perfil",
+  "friends": "Amigos",
+  "conversations": "Conversaciones",
+  "loading": "Cargando...",
+  "error": {
+    "fetchConversations": "Error al cargar las conversaciones",
+    "fetchMessages": "Error al cargar los mensajes"
+  },
+  "chat": "Chat",
+  "typeMessage": "Escribe un mensaje...",
+  "send": "Enviar"
+}

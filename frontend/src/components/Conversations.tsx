@@ -8,8 +8,6 @@ import { useAuth } from "../hooks/useAuth";
 
 const Conversations: React.FC = () => {
   const { loading, error, data } = useQuery(GET_CONVERSATIONS);
-  const { user } = useAuth();
-  console.log(data);
   if (loading)
     return <div className="text-center">Loading conversations...</div>;
   if (error)
