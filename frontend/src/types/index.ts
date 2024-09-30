@@ -14,6 +14,7 @@ export interface User {
   lastLoginTime: string;
   bio: string;
   role: "USER" | "ADMIN";
+  twoFactorEnabled: boolean;
 }
 
 export interface AuthPayload {

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
-import { LOGIN } from "../graphql/mutations";
+import { LOGIN, VERIFY_TWO_FACTOR } from "../graphql/mutations";
 import { useAuth } from "../hooks/useAuth";
 import { useForm } from "../hooks/useForm";
 import GoogleSignInButton from "./GoogleSignInButton";
@@ -9,13 +9,23 @@ import GoogleSignInButton from "./GoogleSignInButton";
 const LoginForm: React.FC = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { values, handleChange } = useForm({ email: "", password: "" });
+  const [showTwoFactor, setShowTwoFactor] = useState(false);
+  const { values, handleChange } = useForm({
+    email: "",
+    password: "",
+    twoFactorToken: "",
+  });
+
   const [loginMutation, { loading, error }] = useMutation(LOGIN);
+  const [verifyTwoFactor, { error: tokenError }] =
+    useMutation(VERIFY_TWO_FACTOR);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { data } = await loginMutation({ variables: values });
+      const { data } = await loginMutation({
+        variables: { email: values.email, password: values.password },
+      });
       login(data.login.token, data.login.user);
       navigate("/");
     } catch (err) {
@@ -23,8 +33,63 @@ const LoginForm: React.FC = () => {
     }
   };
 
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { data } = await loginMutation({
+        variables: { email: values.email, password: values.password },
+      });
+      // login(data.login.token, data.login.user)
+      if (data.login.requiresTwoFactor) {
+        setShowTwoFactor(true);
+      } else {
+        login(data.login.token, data.login.user);
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
+
+  const handleVerifyTwoFactor = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const { data } = await verifyTwoFactor({
+        variables: { email: values.email, token: values.twoFactorToken },
+      });
+      login(data.verifyTwoFactor.token, data.verifyTwoFactor.user);
+      navigate("/");
+    } catch (error) {
+      console.error("Two-factor verification error:", error);
+    }
+  };
+
+  if (showTwoFactor) {
+    return (
+      <form onSubmit={handleVerifyTwoFactor} className="max-w-md mx-auto mt-8">
+        <h2 className="text-2xl font-bold mb-4">Two-Factor Authentication</h2>
+        <input
+          type="text"
+          name="twoFactorToken"
+          value={values.twoFactorToken}
+          onChange={handleChange}
+          placeholder="Enter token from authenticator app"
+          className="w-full p-2 border rounded mb-2"
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Verify
+        </button>
+        {tokenError && (
+          <p className="text-red-500 mb-4">{tokenError.message}</p>
+        )}
+      </form>
+    );
+  }
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto dark:text-white">
+    <form onSubmit={handleLogin} className="max-w-md mx-auto dark:text-white">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
       <div className="mb-4">
         <label htmlFor="email" className="block mb-2">

@@ -10,6 +10,7 @@ export const LOGIN = gql`
         email
         role
       }
+      requiresTwoFactor
     }
   }
 `;
@@ -177,6 +178,40 @@ export const REMOVE_FRIEND = gql`
     removeFriend(friendId: $friendId) {
       id
       username
+    }
+  }
+`;
+
+export const GENERATE_TWO_FACTOR_SECRET = gql`
+  mutation GenerateTwoFactorSecret {
+    generateTwoFactorSecret {
+      secret
+      otpauthUrl
+    }
+  }
+`;
+
+export const ENABLE_TWO_FACTOR = gql`
+  mutation EnableTwoFactor($token: String!) {
+    enableTwoFactor(token: $token)
+  }
+`;
+
+export const DISABLE_TWO_FACTOR = gql`
+  mutation DisableTwoFactor($token: String!) {
+    disableTwoFactor(token: $token)
+  }
+`;
+
+export const VERIFY_TWO_FACTOR = gql`
+  mutation VerifyTwoFactor($email: String!, $token: String!) {
+    verifyTwoFactor(email: $email, token: $token) {
+      token
+      user {
+        id
+        username
+        email
+      }
     }
   }
 `;

@@ -20,6 +20,7 @@ import { DarkModeProvider } from "./context/DarkModeContext";
 import "./styles/global.css"; // Import the global CSS
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AdminPanel from "./components/AdminPanel";
+import TwoFactorSetup from "./components/TwoFactorSetup";
 
 const App: React.FC = () => {
   return (
@@ -44,6 +45,10 @@ const App: React.FC = () => {
                     <Route path="/register" element={<RegisterForm />} />
                     <Route path="/find-friends" element={<FindFriends />} />
                     <Route path="/admin" element={<AdminPanel />} />
+                    <Route
+                      path="/two-factor-setup"
+                      element={<TwoFactorSetup />}
+                    />
                     <Route
                       path="/friend-requests"
                       element={<FriendRequest />}

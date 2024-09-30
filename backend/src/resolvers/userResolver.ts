@@ -1,7 +1,7 @@
 import { IResolvers } from "@graphql-tools/utils";
 import { Context } from "../context";
 import { verifyGoogleToken, generateJwtToken } from "../utils/googleAuth";
-
+import { generateSecret, verifyToken } from "../utils/twoFactor";
 import {
   AuthenticationError,
   ForbiddenError,
@@ -161,12 +161,24 @@ const userResolvers: IResolvers<any, Context> = {
       if (!isPasswordValid) {
         throw new UserInputError("Invalid credentials");
       }
+      if (user.twoFactorEnabled) {
+        return {
+          requiresTwoFactor: true,
+          user: {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            role: user.role,
+          },
+          token: null,
+        };
+      }
       const token = generateToken(user.id);
       await prisma.user.update({
         where: { id: user.id },
         data: { lastLoginTime: new Date() },
       });
-      return { token, user };
+      return { token, user, requiresTwoFactor: false };
     },
     updateProfile: async (
       parent,
@@ -276,6 +288,81 @@ const userResolvers: IResolvers<any, Context> = {
       });
 
       return updatedUser;
+    },
+    generateTwoFactorSecret: async (_, __, { prisma, user }) => {
+      if (!user) {
+        throw new AuthenticationError("Not authenticated");
+      }
+
+      const { secret, otpauthUrl } = await generateSecret(user.email);
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { twoFactorSecret: secret },
+      });
+
+      return { secret, otpauthUrl };
+    },
+
+    enableTwoFactor: async (_, { token }, { prisma, user }) => {
+      if (!user) {
+        throw new AuthenticationError("Not authenticated");
+      }
+
+      const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+      if (!dbUser || !dbUser.twoFactorSecret) {
+        throw new Error("Two-factor secret not found");
+      }
+
+      const isValid = verifyToken(dbUser.twoFactorSecret, token);
+      if (!isValid) {
+        throw new Error("Invalid token");
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { twoFactorEnabled: true },
+      });
+
+      return true;
+    },
+
+    disableTwoFactor: async (_, { token }, { prisma, user }) => {
+      if (!user) {
+        throw new AuthenticationError("Not authenticated");
+      }
+
+      const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+      if (!dbUser || !dbUser.twoFactorSecret || !dbUser.twoFactorEnabled) {
+        throw new Error("Two-factor authentication is not enabled");
+      }
+
+      const isValid = verifyToken(dbUser.twoFactorSecret, token);
+      if (!isValid) {
+        throw new Error("Invalid token");
+      }
+
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { twoFactorEnabled: false, twoFactorSecret: null },
+      });
+
+      return true;
+    },
+
+    verifyTwoFactor: async (_, { email, token }, { prisma }) => {
+      const user = await prisma.user.findUnique({ where: { email } });
+      if (!user || !user.twoFactorSecret || !user.twoFactorEnabled) {
+        throw new AuthenticationError("Invalid credentials or 2FA not enabled");
+      }
+
+      const isValid = verifyToken(user.twoFactorSecret, token);
+      if (!isValid) {
+        throw new AuthenticationError("Invalid 2FA token");
+      }
+
+      const jwtToken = generateToken(user.id);
+      return { token: jwtToken, user };
     },
   },
 };

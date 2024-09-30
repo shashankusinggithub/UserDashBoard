@@ -14,6 +14,13 @@ const typeDefs = gql`
     isFriend: Boolean!
     bio: String
     role: Role!
+    twoFactorSecret: String
+    twoFactorEnabled: Boolean!
+  }
+  type LoginResult {
+    token: String
+    user: User
+    requiresTwoFactor: Boolean!
   }
   enum Role {
     USER
@@ -118,7 +125,8 @@ const typeDefs = gql`
       firstName: String!
       lastName: String!
     ): AuthPayload
-    login(email: String!, password: String!): AuthPayload
+    login(email: String!, password: String!): LoginResult!
+    verifyTwoFactor(email: String!, token: String!): AuthPayload!
     updateProfile(firstName: String!, lastName: String!, bio: String!): User
     createPost(content: String!): Post
     updatePost(id: ID!, content: String!): Post
@@ -133,6 +141,13 @@ const typeDefs = gql`
     updateProfilePicture(base64Image: String!): User
     googleSignIn(accessToken: String!): AuthPayload!
     updateUserRole(userId: ID!, role: Role!): User
+    generateTwoFactorSecret: TwoFactorSecret!
+    enableTwoFactor(token: String!): Boolean!
+    disableTwoFactor(token: String!): Boolean!
+  }
+  type TwoFactorSecret {
+    secret: String!
+    otpauthUrl: String!
   }
 
   type Subscription {
