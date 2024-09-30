@@ -19,6 +19,7 @@ import ProfileEdit from "./components/ProfileEdit";
 import { DarkModeProvider } from "./context/DarkModeContext";
 import "./styles/global.css"; // Import the global CSS
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import AdminPanel from "./components/AdminPanel";
 
 const App: React.FC = () => {
   return (
@@ -42,6 +43,7 @@ const App: React.FC = () => {
                     <Route path="/login" element={<LoginForm />} />
                     <Route path="/register" element={<RegisterForm />} />
                     <Route path="/find-friends" element={<FindFriends />} />
+                    <Route path="/admin" element={<AdminPanel />} />
                     <Route
                       path="/friend-requests"
                       element={<FriendRequest />}

@@ -1,0 +1,17 @@
+# Local Netlify folder
+.netlify
+aggregated_code.txt
+.DS_Store
+all-code.py 
+.env
+dbredis/compose.yml
+frontend/.env
+backend/prisma/migrations/migration_lock.toml
+backend/package-lock.json
+backend/package-lock.json
+
+
+*migration*
+*package-lock*
+
+frontend/.env

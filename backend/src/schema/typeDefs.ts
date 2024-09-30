@@ -13,6 +13,11 @@ const typeDefs = gql`
     lastLoginTime: String
     isFriend: Boolean!
     bio: String
+    role: Role!
+  }
+  enum Role {
+    USER
+    ADMIN
   }
 
   type Conversation {
@@ -127,6 +132,7 @@ const typeDefs = gql`
     sendMessage(conversationId: ID!, content: String!): Message!
     updateProfilePicture(base64Image: String!): User
     googleSignIn(accessToken: String!): AuthPayload!
+    updateUserRole(userId: ID!, role: Role!): User
   }
 
   type Subscription {

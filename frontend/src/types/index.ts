@@ -13,6 +13,7 @@ export interface User {
   conversations: Conversation[];
   lastLoginTime: string;
   bio: string;
+  role: "USER" | "ADMIN";
 }
 
 export interface AuthPayload {

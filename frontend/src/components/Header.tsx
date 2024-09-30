@@ -73,6 +73,13 @@ const Header: React.FC = () => {
                     Home
                   </Link>
                 </li>
+
+                {user && user.role === "ADMIN" && (
+                  <Link to="/admin" className="text-white hover:text-gray-200">
+                    Admin
+                  </Link>
+                )}
+
                 <li>
                   <Link
                     to="/profile"
@@ -131,6 +138,11 @@ const Header: React.FC = () => {
                 >
                   Home
                 </Link>
+                {user && user.role === "ADMIN" && (
+                  <Link to="/admin" className="text-white hover:text-gray-200">
+                    Admin
+                  </Link>
+                )}
                 <Link
                   to="/profile"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"

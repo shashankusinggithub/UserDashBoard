@@ -2,7 +2,11 @@ import { IResolvers } from "@graphql-tools/utils";
 import { Context } from "../context";
 import { verifyGoogleToken, generateJwtToken } from "../utils/googleAuth";
 
-import { AuthenticationError, UserInputError } from "apollo-server-express";
+import {
+  AuthenticationError,
+  ForbiddenError,
+  UserInputError,
+} from "apollo-server-express";
 import {
   comparePasswords,
   generateToken,
@@ -250,6 +254,25 @@ const userResolvers: IResolvers<any, Context> = {
       const updatedUser = await prisma.user.findUnique({
         where: { id: user.id },
         include: { friends: true },
+      });
+
+      return updatedUser;
+    },
+    updateUserRole: async (_, { userId, role }, { prisma, user }) => {
+      if (!user) {
+        throw new AuthenticationError("Not authenticated");
+      }
+      const userDetails = await prisma.user.findUnique({
+        where: { id: user.id },
+      });
+      console.log(user);
+      if (userDetails.role !== "ADMIN") {
+        throw new ForbiddenError("Only admins can update user roles");
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: { role },
       });
 
       return updatedUser;

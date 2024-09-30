@@ -25,6 +25,7 @@ model User {
   lastLoginTime  DateTime @default(now())
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  role           Role     @default(USER)
 
   posts    Post[]
   comments Comment[]
@@ -42,6 +43,11 @@ model User {
   notifications Notification[]
 
   @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Post {

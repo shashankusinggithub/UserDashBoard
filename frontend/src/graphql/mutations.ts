@@ -8,6 +8,7 @@ export const LOGIN = gql`
         id
         username
         email
+        role
       }
     }
   }
@@ -133,7 +134,15 @@ export const UPDATE_PROFILE = gql`
     }
   }
 `;
-
+export const UPDATE_USER_ROLE = gql`
+  mutation UpdateUserRole($userId: ID!, $role: Role!) {
+    updateUserRole(userId: $userId, role: $role) {
+      id
+      username
+      role
+    }
+  }
+`;
 export const UPDATE_PROFILE_PICTURE = gql`
   mutation UpdateProfilePicture($base64Image: String!) {
     updateProfilePicture(base64Image: $base64Image) {
