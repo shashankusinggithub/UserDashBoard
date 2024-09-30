@@ -30,7 +30,7 @@ const PostForm: React.FC = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mb-4">
+    <form onSubmit={handleSubmit} className="mb-4 max-w-4xl">
       <textarea
         name="content"
         value={values.content}

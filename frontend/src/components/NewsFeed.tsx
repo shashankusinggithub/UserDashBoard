@@ -5,8 +5,9 @@ import PostForm from "./PostForm";
 import { Post } from "../types";
 import { handleError } from "../utils/error-handling";
 import PostCard from "./PostCard";
+import Dashboard from "./Dashboard";
 
-const Home: React.FC = () => {
+const NewsFeed: React.FC = () => {
   const { loading, error, data, subscribeToMore } = useQuery(GET_POSTS);
 
   useEffect(() => {
@@ -36,9 +37,11 @@ const Home: React.FC = () => {
 
   return (
     <div className="dark:bg-gray-800 bg-gray-100">
-      <h1 className="text-3xl font-bold mb-4 dark:text-white">News Feed</h1>
+      <h1 className="text-3xl font-bold mb-4 dark:text-white mt-12">
+        News Feed
+      </h1>
       <PostForm />
-      <div>
+      <div className="max-w-4xl mx-auto">
         {data.posts.map((post: Post) => (
           <PostCard key={post.id} post={post} />
         ))}
@@ -47,4 +50,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export default NewsFeed;

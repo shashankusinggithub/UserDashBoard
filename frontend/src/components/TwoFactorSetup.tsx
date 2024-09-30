@@ -6,6 +6,7 @@ import {
   GENERATE_TWO_FACTOR_SECRET,
   ENABLE_TWO_FACTOR,
 } from "../graphql/mutations";
+import { useNavigate } from "react-router-dom";
 
 const TwoFactorSetup: React.FC = () => {
   const [secret, setSecret] = useState("");
@@ -15,6 +16,7 @@ const TwoFactorSetup: React.FC = () => {
   const [generateSecret] = useMutation(GENERATE_TWO_FACTOR_SECRET);
   const [enableTwoFactor] = useMutation(ENABLE_TWO_FACTOR);
 
+  const navigate = useNavigate();
   const handleGenerateSecret = async () => {
     try {
       const { data } = await generateSecret();
@@ -31,13 +33,13 @@ const TwoFactorSetup: React.FC = () => {
       if (data.enableTwoFactor) {
         alert("Two-factor authentication enabled successfully!");
       }
+      navigate("/profile");
     } catch (error) {
       console.error("Error enabling 2FA:", error);
     }
   };
-
   return (
-    <div className="max-w-md mx-auto mt-8">
+    <div className="max-w-md  mt-8">
       <h2 className="text-2xl font-bold mb-4">
         Set Up Two-Factor Authentication
       </h2>

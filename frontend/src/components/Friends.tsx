@@ -1,6 +1,6 @@
 import React from "react";
 import { useMutation, useQuery } from "@apollo/client";
-import { GET_FRIENDS } from "../graphql/queries";
+import { GET_FRIENDS_LIST } from "../graphql/queries";
 import { User } from "../types";
 import { handleError } from "../utils/error-handling";
 import {
@@ -48,7 +48,7 @@ const FriendCard: React.FC<{
 );
 
 const Friends: React.FC = () => {
-  const { loading, error, data } = useQuery(GET_FRIENDS);
+  const { loading, error, data } = useQuery(GET_FRIENDS_LIST);
   const [createConversation] = useMutation(CREATE_OR_GET_CONVERSATION);
   const [removeFriend] = useMutation(REMOVE_FRIEND);
   const navigate = useNavigate();
@@ -81,7 +81,7 @@ const Friends: React.FC = () => {
     <div>
       <h1 className="text-3xl font-bold mb-4 dark:text-white">Friends</h1>
       <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
-        {data.me.friends?.map((friend: User) => (
+        {data.getFriendsList?.map((friend: User) => (
           <FriendCard
             key={friend.id}
             friend={friend}

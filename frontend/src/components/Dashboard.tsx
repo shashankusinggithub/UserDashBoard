@@ -1,0 +1,62 @@
+// frontend/src/components/Dashboard.tsx
+
+import React from "react";
+import { useQuery } from "@apollo/client";
+import { GET_USER_ANALYTICS, GET_FRIENDS_LIST } from "../graphql/queries";
+import { format } from "date-fns";
+import { User } from "../types";
+
+const Dashboard: React.FC = () => {
+  const {
+    loading: analyticsLoading,
+    error: analyticsError,
+    data: analyticsData,
+  } = useQuery(GET_USER_ANALYTICS);
+  const {
+    loading: friendsLoading,
+    error: friendsError,
+    data: friendsData,
+  } = useQuery(GET_FRIENDS_LIST);
+
+  if (analyticsLoading || friendsLoading) return <p>Loading...</p>;
+  if (analyticsError)
+    return <p>Error loading analytics: {analyticsError.message}</p>;
+  if (friendsError)
+    return <p>Error loading friends list: {friendsError.message}</p>;
+
+  const { lastLoginTime, totalFriends, totalPosts, totalLikes } =
+    analyticsData.getUserAnalytics;
+
+  return (
+    <div className="my-8">
+      <h1 className="text-3xl font-bold mb-6 dark:text-white">Dashboard</h1>
+      <div className="mx-auto max-w-4xl">
+        <div className="bg-white shadow rounded-lg  p-6 mb-6 ">
+          <h2 className="text-xl font-semibold mb-4">Analytics</h2>
+          <p>Last Login: {format(new Date(lastLoginTime), "PPpp")}</p>
+          <p>Total Friends: {totalFriends}</p>
+          <p>Total Posts: {totalPosts}</p>
+          <p>Total Likes: {totalLikes}</p>
+        </div>
+
+        <div className="bg-white shadow rounded-lg p-6 ">
+          <h2 className="text-xl font-semibold mb-4">Friends List</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {friendsData.getFriendsList.map((friend: User) => (
+              <div key={friend.id} className="flex items-center space-x-3">
+                <img
+                  src={friend.profilePicture || "/default-avatar.png"}
+                  alt={`${friend.username}'s avatar`}
+                  className="w-10 h-10 rounded-full"
+                />
+                <span>{friend.username}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

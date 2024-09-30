@@ -60,15 +60,23 @@ export const GET_MESSAGES = gql`
   }
 `;
 
-export const GET_FRIENDS = gql`
-  query GetFriends {
-    me {
-      friends {
-        id
-        username
-        firstName
-        lastName
-      }
+export const GET_USER_ANALYTICS = gql`
+  query GetUserAnalytics {
+    getUserAnalytics {
+      lastLoginTime
+      totalFriends
+      totalPosts
+      totalLikes
+    }
+  }
+`;
+
+export const GET_FRIENDS_LIST = gql`
+  query GetFriendsList {
+    getFriendsList {
+      id
+      username
+      profilePicture
     }
   }
 `;
@@ -110,11 +118,8 @@ export const GET_USER_PROFILE = gql`
       firstName
       lastName
       profilePicture
-      friends {
-        id
-        username
-      }
       bio
+      twoFactorEnabled
     }
   }
 `;

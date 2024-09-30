@@ -59,13 +59,13 @@ const userResolvers: IResolvers<any, Context> = {
         };
       });
     },
-    friends: async (_, __, { prisma, user }: Context) => {
+    getFriendsList: async (_, __, { prisma, user }: Context) => {
       if (!user)
         throw new AuthenticationError(
           "You must be logged in to view your friends"
         );
 
-      const userData = await prisma.user.findUnique({
+      const usersData = await prisma.user.findUnique({
         where: { id: user.id },
         include: {
           friends: {
@@ -81,7 +81,40 @@ const userResolvers: IResolvers<any, Context> = {
         },
       });
 
-      return userData?.friends || [];
+      return usersData?.friends || [];
+    },
+    getUserAnalytics: async (_, __, { prisma, user }) => {
+      if (!user) {
+        throw new AuthenticationError("Not authenticated");
+      }
+
+      const userData = await prisma.user.findUnique({
+        where: { id: user.id },
+        include: {
+          friends: true,
+          posts: {
+            include: {
+              likes: true,
+            },
+          },
+        },
+      });
+
+      if (!userData) {
+        throw new Error("User not found");
+      }
+
+      const totalLikes = userData.posts.reduce(
+        (sum, post) => sum + post.likes.length,
+        0
+      );
+
+      return {
+        lastLoginTime: userData.lastLoginTime.toISOString(),
+        totalFriends: userData.friends.length,
+        totalPosts: userData.posts.length,
+        totalLikes,
+      };
     },
   },
   User: {
@@ -327,24 +360,31 @@ const userResolvers: IResolvers<any, Context> = {
       return true;
     },
 
-    disableTwoFactor: async (_, { token }, { prisma, user }) => {
+    disableTwoFactor: async (_, { password }, { prisma, user }) => {
       if (!user) {
         throw new AuthenticationError("Not authenticated");
       }
 
       const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-      if (!dbUser || !dbUser.twoFactorSecret || !dbUser.twoFactorEnabled) {
-        throw new Error("Two-factor authentication is not enabled");
+      if (!dbUser) {
+        throw new ForbiddenError("User not found");
       }
 
-      const isValid = verifyToken(dbUser.twoFactorSecret, token);
-      if (!isValid) {
-        throw new Error("Invalid token");
+      const isPasswordValid = await comparePasswords(password, dbUser.password);
+      if (!isPasswordValid) {
+        throw new ForbiddenError("Invalid password");
+      }
+
+      if (!dbUser.twoFactorEnabled) {
+        throw new ForbiddenError("Two-factor authentication is not enabled");
       }
 
       await prisma.user.update({
         where: { id: user.id },
-        data: { twoFactorEnabled: false, twoFactorSecret: null },
+        data: {
+          twoFactorEnabled: false,
+          twoFactorSecret: null,
+        },
       });
 
       return true;

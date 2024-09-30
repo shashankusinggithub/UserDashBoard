@@ -294,3 +294,11 @@ export interface CreateOrGetConversationMutationResult {
     }[];
   };
 }
+
+export interface GetFriendsList {
+  getFriendsList: {
+    id: string;
+    username: string;
+    profilePicture: string;
+  };
+}

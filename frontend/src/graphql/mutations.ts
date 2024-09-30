@@ -198,8 +198,8 @@ export const ENABLE_TWO_FACTOR = gql`
 `;
 
 export const DISABLE_TWO_FACTOR = gql`
-  mutation DisableTwoFactor($token: String!) {
-    disableTwoFactor(token: $token)
+  mutation DisableTwoFactor($password: String!) {
+    disableTwoFactor(password: $password)
   }
 `;
 

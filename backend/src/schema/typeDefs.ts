@@ -113,7 +113,8 @@ const typeDefs = gql`
     conversations: [Conversation!]!
     conversation(id: ID!): Conversation
     messages(conversationId: ID!): [Message!]!
-    friends: [User!]!
+    getUserAnalytics: Analytics!
+    getFriendsList: [User!]!
   }
 
   type Mutation {
@@ -143,7 +144,7 @@ const typeDefs = gql`
     updateUserRole(userId: ID!, role: Role!): User
     generateTwoFactorSecret: TwoFactorSecret!
     enableTwoFactor(token: String!): Boolean!
-    disableTwoFactor(token: String!): Boolean!
+    disableTwoFactor(password: String!): Boolean!
   }
   type TwoFactorSecret {
     secret: String!
@@ -155,6 +156,12 @@ const typeDefs = gql`
     newFriendRequest: FriendRequest
     newMessage(conversationId: ID!): Message!
     newNotification: Notification
+  }
+  type Analytics {
+    lastLoginTime: String
+    totalFriends: Int
+    totalPosts: Int
+    totalLikes: Int
   }
 `;
 
