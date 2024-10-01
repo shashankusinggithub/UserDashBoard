@@ -74,7 +74,7 @@ const Header: React.FC = () => {
               <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 <li>
                   <Link
-                    to="news-feed"
+                    to="/news-feed"
                     className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                   >
                     News Feed
@@ -139,11 +139,11 @@ const Header: React.FC = () => {
             {user ? ( // Show mobile links only if user is logged in
               <>
                 <Link
-                  to="/"
+                  to="/news-feed"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Home
+                  News Feed
                 </Link>
                 {user && user.role === "ADMIN" && (
                   <Link to="/admin" className="text-white hover:text-gray-200">
@@ -155,21 +155,21 @@ const Header: React.FC = () => {
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Profile
+                  {t("profile")}
                 </Link>
                 <Link
                   to="/conversations"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Conversations
+                  {t("conversations")}
                 </Link>
                 <Link
                   to="/friends"
                   className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Friends
+                  {t("friends")}
                 </Link>
                 <Link
                   to="/find-friends"
@@ -190,7 +190,7 @@ const Header: React.FC = () => {
                   onClick={logout}
                   className=" w-full items-center px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg"
                 >
-                  Logout
+                  {t("logout")}
                 </button>
               </>
             ) : (
