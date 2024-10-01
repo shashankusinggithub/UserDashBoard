@@ -168,6 +168,7 @@ export const GOOGLE_SIGN_IN = gql`
       token
       user {
         email
+        role
       }
     }
   }
