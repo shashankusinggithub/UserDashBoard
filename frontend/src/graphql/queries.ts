@@ -1,8 +1,8 @@
 import { gql } from "@apollo/client";
 
 export const GET_POSTS = gql`
-  query GetPosts {
-    posts {
+  query GetPosts($friendsOnly: Boolean!) {
+    posts(friendsOnly: $friendsOnly) {
       id
       content
       author {
@@ -66,20 +66,6 @@ export const GET_CONVERSATION = gql`
         }
       }
       updatedAt
-    }
-  }
-`;
-export const NEW_POST_SUBSCRIPTION = gql`
-  subscription NewPostSubscription {
-    newPost {
-      id
-      content
-      author {
-        id
-        username
-        profilePicture
-      }
-      createdAt
     }
   }
 `;
@@ -176,6 +162,15 @@ export const SEARCH_USERS = gql`
 `;
 export const GET_USERS = gql`
   query GetUsers {
+    users {
+      id
+      username
+      email
+    }
+  }
+`;
+export const GET_USERS_FOR_ADMIN = gql`
+  query GetUsersForAdmin {
     users {
       id
       username

@@ -11,6 +11,7 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { WebSocketLink } from "@apollo/client/link/ws";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import { logout } from "../context/AuthContext";
 
 const httpLink = new HttpLink({
   uri: process.env.REACT_APP_BACK_END_URL || "http://localhost:4000/graphql",
@@ -37,12 +38,18 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors)
-    graphQLErrors.forEach(({ message, locations, path }) =>
+  if (graphQLErrors) {
+    console.log(graphQLErrors);
+    graphQLErrors.forEach(({ message, locations, path, extensions }) => {
+      if (extensions?.code === "UNAUTHENTICATED") {
+        logout();
+        window.location.href = "/login";
+      }
       console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-      )
-    );
+        `[GraphQL error]: Message: ${message}, Location: ${locations?.toLocaleString()}, Path: ${path}`
+      );
+    });
+  }
   if (networkError) console.log(`[Network error]: ${networkError}`);
 });
 

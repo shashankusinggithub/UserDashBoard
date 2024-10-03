@@ -31,7 +31,6 @@ const userResolvers: IResolvers<any, Context> = {
     },
     users: async (_, { searchTerm }, { prisma, user }: Context) => {
       if (!user) throw new AuthenticationError("Not authenticated");
-
       if (!searchTerm) {
         return prisma.user.findMany({ take: 20 });
       }

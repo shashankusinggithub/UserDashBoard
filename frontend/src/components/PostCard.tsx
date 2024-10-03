@@ -3,14 +3,37 @@
 import React from "react";
 import { useMutation } from "@apollo/client";
 import { Post } from "../types";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, parseISO } from "date-fns";
 import Avatar from "../assests/default-avatar.png";
+import { debug } from "console";
 
 interface PostCardProps {
   post: Post;
 }
 
 const PostCard: React.FC<PostCardProps> = ({ post }) => {
+  const formatDate = (dateValue: string) => {
+    try {
+      // Check if the timestamp is in seconds (10 digits) or milliseconds (13 digits)
+      let date;
+      if (dateValue.length == 13) {
+        date = new Date(parseInt(dateValue));
+      } else {
+        date = new Date(dateValue);
+      }
+
+      if (isNaN(date.getTime())) {
+        throw new Error("Invalid date");
+      }
+      const fiftyYearsAgo = new Date();
+      fiftyYearsAgo.setFullYear(fiftyYearsAgo.getFullYear() - 50);
+
+      return formatDistanceToNow(date, { addSuffix: true });
+    } catch (error) {
+      console.error("Error parsing date:", error, "Date value:", dateValue);
+      return "Date unavailable";
+    }
+  };
   return (
     <div className="bg-white shadow rounded-lg p-6 mb-6 dark:bg-gray-400">
       <div className="flex items-center mb-4">
@@ -25,11 +48,7 @@ const PostCard: React.FC<PostCardProps> = ({ post }) => {
         />
         <div>
           <p className="font-semibold">{post.author.username}</p>
-          <p className="text-gray-500 text-sm">
-            {formatDistanceToNow(new Date(parseInt(post.createdAt)), {
-              addSuffix: true,
-            })}
-          </p>
+          <p className="text-gray-500 text-sm">{formatDate(post.createdAt)}</p>
         </div>
       </div>
       <p className="mb-4">{post.content}</p>

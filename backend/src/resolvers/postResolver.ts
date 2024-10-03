@@ -1,24 +1,50 @@
 import { IResolvers } from "@graphql-tools/utils";
 import { AuthenticationError, UserInputError } from "apollo-server-express";
 import { Context } from "../context";
+import { setCache, getCache } from "../utils/redis";
+
 import { pubsub } from "../pubsub";
 import redis from "../utils/redis";
 
+const ALL_POSTS_CACHE_KEY = "posts:all";
+
 const postResolver: IResolvers = {
   Query: {
-    posts: async (_, __, { prisma, user }: Context) => {
+    posts: async (_, { friendsOnly }, { prisma, user }: Context) => {
       if (!user) throw new AuthenticationError("Not authenticated");
-      const cachedPosts = await redis.get("all_posts");
+      let cacheKey = friendsOnly
+        ? `posts:friends:${user.id}`
+        : ALL_POSTS_CACHE_KEY;
+      const cachedPosts = await getCache(cacheKey);
+
       if (cachedPosts) {
-        return JSON.parse(cachedPosts);
+        return cachedPosts;
       }
+      let posts;
+      if (friendsOnly) {
+        // Get the user's friend IDs
+        const friendIds = await prisma.user
+          .findUnique({ where: { id: user.id } })
+          .friends()
+          .then((friends) => friends.map((friend) => friend.id));
 
-      const posts = await prisma.post.findMany({
-        include: { author: true, comments: true, likes: true },
-        orderBy: { createdAt: "desc" },
-      });
+        // Include the user's own posts as well
+        friendIds.push(user.id);
 
-      await redis.set("all_posts", JSON.stringify(posts), "EX", 3600);
+        posts = await prisma.post.findMany({
+          where: {
+            authorId: { in: friendIds },
+          },
+          include: { author: true, comments: true, likes: true },
+          orderBy: { createdAt: "desc" },
+        });
+      } else {
+        posts = await prisma.post.findMany({
+          include: { author: true, comments: true, likes: true },
+          orderBy: { createdAt: "desc" },
+        });
+      }
+      await setCache(cacheKey, posts);
       return posts;
     },
     post: async (_, { id }, { prisma, user }: Context) => {
@@ -57,7 +83,6 @@ const postResolver: IResolvers = {
         const newPost = await prisma.post.create({
           data: {
             content,
-
             author: { connect: { id: user.id } },
           },
           include: {
@@ -71,10 +96,8 @@ const postResolver: IResolvers = {
           },
         });
 
-        // Publish the new post event for subscriptions
         pubsub.publish("NEW_POST", { newPost });
-
-        // Create notifications for the author's friends
+        await invalidatePostCaches(user.id);
         const friendIds = await prisma.user
           .findUnique({
             where: { id: user.id },
@@ -89,9 +112,6 @@ const postResolver: IResolvers = {
             userId: friendId,
           })),
         });
-        // Clear Redis cache for posts
-
-        await redis.del("all_posts");
 
         return newPost;
       } catch (error) {
@@ -145,4 +165,14 @@ const postResolver: IResolvers = {
   },
 };
 
+async function invalidatePostCaches(userId: string) {
+  const cacheKeys = [
+    `posts:friends:${userId}`, // friends only posts for this user
+    ALL_POSTS_CACHE_KEY, // all posts (global)
+  ];
+
+  for (const key of cacheKeys) {
+    await setCache(key, null, 1); // Set to null and expire immediately
+  }
+}
 export default postResolver;

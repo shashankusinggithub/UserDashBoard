@@ -8,6 +8,7 @@ const GoogleSignInButton: React.FC = () => {
   const { login } = useAuth();
   const [googleSignIn] = useMutation(GOOGLE_SIGN_IN);
   const navigate = useNavigate();
+
   const handleGoogleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       try {

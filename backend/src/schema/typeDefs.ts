@@ -110,7 +110,7 @@ const typeDefs = gql`
     me: User
     user(id: ID!): User
     users(searchTerm: String): [User]
-    posts: [Post]
+    posts(friendsOnly: Boolean!): [Post!]!
     post(id: ID!): Post
     userPosts(userId: ID!): [Post]
     friendRequests: [FriendRequest]

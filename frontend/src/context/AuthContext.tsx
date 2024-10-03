@@ -23,6 +23,8 @@ interface AuthProviderProps {
   client: ApolloClient<any>;
 }
 
+let globalLogout: () => void;
+
 export const AuthProvider: React.FC<AuthProviderProps> = ({
   children,
   client,
@@ -64,4 +66,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const logout = () => {
+  if (globalLogout) {
+    globalLogout();
+  }
 };

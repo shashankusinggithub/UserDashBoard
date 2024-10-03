@@ -53,9 +53,11 @@ const FriendCard: React.FC<{
 );
 
 const Friends: React.FC = () => {
-  const { loading, error, data } = useQuery(GET_FRIENDS_LIST);
+  const { loading, error, data, refetch } = useQuery(GET_FRIENDS_LIST);
   const [createConversation] = useMutation(CREATE_OR_GET_CONVERSATION);
-  const [removeFriend] = useMutation(REMOVE_FRIEND);
+  const [removeFriend] = useMutation(REMOVE_FRIEND, {
+    onCompleted: () => refetch(),
+  });
   const navigate = useNavigate();
 
   const handleStartChat = async (friendId: string) => {
