@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useSubscription } from "@apollo/client";
 import { GET_MESSAGES } from "../graphql/queries";
@@ -13,6 +13,7 @@ const Chat: React.FC = () => {
   const { loading, error, data, subscribeToMore } = useQuery(GET_MESSAGES, {
     variables: { conversationId: id },
   });
+  const [messages, setMessages] = useState<Message[]>(data?.messages || []); // Initialize with data.messages
   const { values, handleChange, resetForm } = useForm({ content: "" });
   const [sendMessage] = useMutation(SEND_MESSAGE);
 
@@ -29,24 +30,31 @@ const Chat: React.FC = () => {
         };
       },
     });
+    setMessages(data?.messages || []); // Update messages when data changes
+    scrollToBottom();
 
     return () => unsubscribe();
-  }, [id, subscribeToMore]);
+  }, [id, subscribeToMore, data]);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
   };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await sendMessage({
+      const { data: sendData } = await sendMessage({
+        // Capture the response
         variables: { conversationId: id, content: values.content },
       });
       resetForm();
+      setMessages([...messages, sendData.sendMessage]);
+      scrollToBottom();
     } catch (err) {
       console.error("Error sending message:", err);
     }
-    scrollToBottom();
   };
 
   if (loading) return <div className="text-center">Loading messages...</div>;
@@ -54,40 +62,43 @@ const Chat: React.FC = () => {
     return <div className="text-center text-red-500">{handleError(error)}</div>;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)]">
+    <div className="flex flex-col h-[calc(100vh-16rem)]">
       <h1 className="text-3xl font-bold mb-4 dark:text-white">Chat</h1>
-      <div className="flex-grow overflow-y-auto mb-4 space-y-4 overflow-x-hidden">
-        {data.messages.map((message: Message) => (
-          <div
-            key={message.id}
-            className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-600 dark:text-white"
-          >
-            <p className="font-bold">{message.sender.username}</p>
-            <p>{message.content}</p>
-            <p className="text-sm text-gray-500">
-              {new Date(parseInt(message.createdAt)).toLocaleString()}
-            </p>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+      <div className="flex-grow overflow-y-auto mb-4 space-y-4">
+        {messages &&
+          messages.map((message: Message) => (
+            <div
+              key={message.id}
+              className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-600 dark:text-white"
+            >
+              <p className="font-bold">{message.sender.username}</p>
+              <p>{message.content}</p>
+              <p className="text-sm text-gray-500">
+                {new Date(parseInt(message.createdAt)).toLocaleString()}
+              </p>
+            </div>
+          ))}
+        <div className="min-h-27" ref={messagesEndRef}></div>
       </div>
-      <form onSubmit={handleSubmit} className="mt-auto">
-        <input
-          type="text"
-          name="content"
-          value={values.content}
-          onChange={handleChange}
-          placeholder="Type a message..."
-          className="w-full p-2 border rounded"
-          required
-        />
-        <button
-          type="submit"
-          className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
-        >
-          Send
-        </button>
-      </form>
+      <div className="">
+        <form onSubmit={handleSubmit}>
+          <input
+            type="text"
+            name="content"
+            value={values.content}
+            onChange={handleChange}
+            placeholder="Type a message..."
+            className="w-full p-2 border rounded"
+            required
+          />
+          <button
+            type="submit"
+            className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+          >
+            Send
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
