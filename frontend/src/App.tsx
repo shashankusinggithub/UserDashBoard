@@ -32,7 +32,7 @@ const App: React.FC = () => {
         <AuthProvider client={client}>
           <DarkModeProvider>
             <Router>
-              <div className="min-h-screen dark:bg-gray-800 bg-gray-100 dark:bg-gray-900 dark:text-grey ">
+              <div className="min-h-screen dark:bg-gray-800 bg-gray-100 dark:text-grey  overflow-y-auto">
                 <Header />
                 <main className="container dark:bg-gray-800 bg-gray-100 mx-auto mt-16 p-4  ">
                   <Routes>

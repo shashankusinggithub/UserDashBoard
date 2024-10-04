@@ -38,7 +38,7 @@ const NewsFeed: React.FC = () => {
 
   useEffect(() => {
     refetch({ friendsOnly: showFriendsOnly });
-  }, [showFriendsOnly, refetch]);
+  }, [showFriendsOnly]);
 
   const toggleFeed = () => {
     setShowFriendsOnly(!showFriendsOnly);

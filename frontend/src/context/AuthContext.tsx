@@ -33,6 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    globalLogout = logout;
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
     if (token && storedUser) {

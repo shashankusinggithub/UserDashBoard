@@ -30,8 +30,10 @@ const Chat: React.FC = () => {
         };
       },
     });
-    setMessages(data?.messages || []); // Update messages when data changes
-    scrollToBottom();
+    setMessages(data?.messages || []);
+    setTimeout(() => {
+      scrollToBottom();
+    }, 100);
 
     return () => unsubscribe();
   }, [id, subscribeToMore, data]);
@@ -62,7 +64,7 @@ const Chat: React.FC = () => {
     return <div className="text-center text-red-500">{handleError(error)}</div>;
 
   return (
-    <div className="flex flex-col h-[calc(100vh-16rem)]">
+    <div className="flex flex-col h-[calc(100vh-10rem)] ">
       <h1 className="text-3xl font-bold mb-4 dark:text-white">Chat</h1>
       <div className="flex-grow overflow-y-auto mb-4 space-y-4">
         {messages &&
@@ -72,13 +74,13 @@ const Chat: React.FC = () => {
               className="bg-white p-4 rounded-lg shadow-md dark:bg-gray-600 dark:text-white"
             >
               <p className="font-bold">{message.sender.username}</p>
-              <p>{message.content}</p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-500 dark:text-white">
                 {new Date(parseInt(message.createdAt)).toLocaleString()}
               </p>
+              <p className="font-semibold font-serif">{message.content}</p>
             </div>
           ))}
-        <div className="min-h-27" ref={messagesEndRef}></div>
+        <div className="min-h-30" ref={messagesEndRef} key={-200}></div>
       </div>
       <div className="">
         <form onSubmit={handleSubmit}>

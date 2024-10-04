@@ -1,5 +1,3 @@
-// src/utils/apollo-client.ts
-
 import {
   ApolloClient,
   InMemoryCache,
@@ -12,20 +10,21 @@ import { WebSocketLink } from "@apollo/client/link/ws";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 import { logout } from "../context/AuthContext";
+import { createClient } from "graphql-ws";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 
 const httpLink = new HttpLink({
   uri: process.env.REACT_APP_BACK_END_URL || "http://localhost:4000/graphql",
 });
-const wsLink = new WebSocketLink({
-  uri: process.env.REACT_APP_BACK_END_WS || "ws://localhost:4000/graphql",
-  options: {
-    reconnect: true,
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: process.env.REACT_APP_BACK_END_WS || "ws://localhost:4000/graphql",
     connectionParams: () => {
       const token = localStorage.getItem("token");
-      return token ? { authorization: `Bearer ${token}` } : {};
+      return token ? { Authorization: `Bearer ${token}` } : {};
     },
-  },
-});
+  })
+);
 
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem("token");
@@ -39,7 +38,6 @@ const authLink = setContext((_, { headers }) => {
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    console.log(graphQLErrors);
     graphQLErrors.forEach(({ message, locations, path, extensions }) => {
       if (extensions?.code === "UNAUTHENTICATED") {
         logout();

@@ -9,6 +9,8 @@ import typeDefs from "./schema/typeDefs";
 import resolvers from "./resolvers";
 import { createContext } from "./context";
 import cors from "cors";
+import { WebSocketServer } from "ws";
+import { useServer } from "graphql-ws/lib/use/ws";
 
 export const prisma = new PrismaClient();
 
@@ -21,22 +23,24 @@ const httpServer = createServer(app);
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
-const subscriptionServer = SubscriptionServer.create(
+const wsServer = new WebSocketServer({
+  server: httpServer,
+  path: "/graphql",
+});
+
+const serverCleanup = useServer(
   {
     schema,
-    execute,
-    subscribe,
-    onConnect: (connectionParams: any) => {
+    context: (ctx) => {
+      // You can access connection parameters here if needed
+      const token = ctx.connectionParams?.Authorization || "";
       return createContext({
-        req: {
-          headers: { authorization: connectionParams.authorization },
-        } as any,
-      });
+        req: { headers: { authorization: token } },
+      } as any);
     },
   },
-  { server: httpServer, path: "/graphql" }
+  wsServer
 );
-
 const server = new ApolloServer({
   schema,
   context: createContext,
@@ -45,7 +49,7 @@ const server = new ApolloServer({
       async serverWillStart() {
         return {
           async drainServer() {
-            subscriptionServer.close();
+            await serverCleanup.dispose();
           },
         };
       },

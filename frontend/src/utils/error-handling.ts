@@ -1,7 +1,6 @@
 import { ApolloError } from "@apollo/client";
 
 export const handleError = (error: ApolloError | Error): string => {
-  console.error(error);
   if (error instanceof ApolloError) {
     console.log(error);
     return (
