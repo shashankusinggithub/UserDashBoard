@@ -28,7 +28,7 @@ export const createContext = ({ req }: { req: Request }): Context => {
 
   const rateLimiter = (options: { windowMs: number; max: number }) => {
     const limiter = createRateLimiter(options);
-    return limiter(req, user);
+    return limiter(req as Request, user);
   };
 
   return { prisma, redis, user, rateLimiter };

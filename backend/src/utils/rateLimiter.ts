@@ -1,6 +1,8 @@
-import { AuthenticationError, UserInputError } from "apollo-server-express";
+import { UserInputError } from "apollo-server-express";
 import { Request } from "express";
 import redis from "./redis";
+import { IFieldResolver } from "@graphql-tools/utils";
+import { Context } from "../context";
 
 interface RateLimitOptions {
   windowMs: number;
@@ -29,10 +31,19 @@ export const createRateLimiter = (options: RateLimitOptions) => {
       if (ipCount && (ipCount[1] as number) > options.max) {
         throw new UserInputError("IP rate limit exceeded. Try again later.");
       }
+      if (userCount && (userCount[1] as number) > options.max) {
+        throw new UserInputError("User rate limit exceeded. Try again later.");
+      }
     }
+  };
+};
 
-    if (results && results[1] && (results[1][1] as number) > options.max) {
-      throw new UserInputError("User rate limit exceeded. Try again later.");
-    }
+export const applyRateLimiter = (
+  resolver: IFieldResolver<any, Context>,
+  options: RateLimitOptions
+) => {
+  return async (parent: any, args: any, context: Context, info: any) => {
+    await context.rateLimiter(options);
+    return resolver(parent, args, context, info);
   };
 };

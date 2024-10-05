@@ -29,10 +29,9 @@ model User {
   twoFactorSecret  String?
   twoFactorEnabled Boolean  @default(false)
 
-  posts    Post[]
-  comments Comment[]
-  likes    Like[]
-
+  posts                  Post[]
+  comments               Comment[]
+  likes                  Like[]
   sentFriendRequests     FriendRequest[] @relation("SentFriendRequests")
   receivedFriendRequests FriendRequest[] @relation("ReceivedFriendRequests")
 

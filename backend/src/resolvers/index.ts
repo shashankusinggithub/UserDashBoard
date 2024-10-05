@@ -1,13 +1,13 @@
 import { mergeResolvers } from "@graphql-tools/merge";
 import { IResolvers, IFieldResolver } from "@graphql-tools/utils";
 import { Context } from "../context";
-import { applyRateLimiter } from "../utils/applyRateLimiter";
 
 import userResolver from "./userResolver";
 import messageResolver from "./messageResolver";
 import notificationResolver from "./notificationResolver";
 import postResolver from "./postResolver";
 import friendRequestResolver from "./friendRequestResolver";
+import { applyRateLimiter } from "../utils/rateLimiter";
 
 // Function to apply rate limiter to all resolvers in an object
 const applyRateLimiterToResolvers = (resolvers: IResolvers): IResolvers => {
