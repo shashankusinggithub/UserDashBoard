@@ -1,6 +1,7 @@
 import { IResolvers } from "@graphql-tools/utils";
 import { AuthenticationError, UserInputError } from "apollo-server-express";
 import { Context } from "../context";
+import { pubsub } from "../pubsub";
 
 const friendRequestResolver: IResolvers = {
   Query: {
@@ -78,12 +79,21 @@ const friendRequestResolver: IResolvers = {
       });
 
       // Create a notification for the receiver
-      await prisma.notification.create({
+      const notification = await prisma.notification.create({
         data: {
-          type: "FRIEND_REQUEST",
           content: `${user.username} sent you a friend request`,
           userId: receiverId,
+          type: "FRIEND_REQUEST",
+          linkId: user.id,
         },
+      });
+
+      pubsub.publish(`NEW_NOTIFICATION_${receiverId}`, {
+        newNotification: notification,
+      });
+
+      pubsub.publish(`NEW_FRIEND_REQUEST_${receiverId}`, {
+        newFriendRequest: friendRequest,
       });
 
       return friendRequest;
@@ -113,13 +123,32 @@ const friendRequestResolver: IResolvers = {
           where: { id: request.senderId },
           data: { friends: { connect: { id: user.id } } },
         });
+
+        const notification = await prisma.notification.create({
+          data: {
+            content: `${request.receiver.username} accepted your friend request`,
+            userId: request.senderId,
+            type: "FRIEND_REQUEST",
+            linkId: request.receiver.username,
+          },
+        });
+
+        pubsub.publish(`NEW_NOTIFICATION_${request.senderId}`, {
+          newNotification: notification,
+        });
       }
 
-      return prisma.friendRequest.update({
+      return prisma.friendRequest.delete({
         where: { id: requestId },
-        data: { status: accept ? "ACCEPTED" : "REJECTED" },
-        include: { sender: true, receiver: true },
       });
+    },
+  },
+  Subscription: {
+    newFriendRequest: {
+      subscribe: (_, __, { user }: Context) => {
+        if (!user) throw new AuthenticationError("Not authenticated");
+        return pubsub.asyncIterator(`NEW_FRIEND_REQUEST_${user.id}`);
+      },
     },
   },
 };

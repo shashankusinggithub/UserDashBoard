@@ -38,6 +38,7 @@ const App: React.FC = () => {
                   <Routes>
                     <Route path="/news-feed" element={<NewsFeed />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/profile/:id" element={<Profile />} />
                     <Route path="/conversations" element={<Conversations />} />
                     <Route path="/conversations/:id" element={<Chat />} />
                     <Route path="/friends" element={<Friends />} />

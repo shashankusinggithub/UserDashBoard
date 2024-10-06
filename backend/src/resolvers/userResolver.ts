@@ -160,7 +160,7 @@ const userResolvers: IResolvers<any, Context> = {
           lastName,
         },
       });
-      const token = generateToken(user.id);
+      const token = generateToken(user.id, user.username);
       return { token, user };
     },
     googleSignIn: async (parent, { accessToken }, { prisma }) => {
@@ -206,7 +206,7 @@ const userResolvers: IResolvers<any, Context> = {
           token: null,
         };
       }
-      const token = generateToken(user.id);
+      const token = generateToken(user.id, user.username);
       await prisma.user.update({
         where: { id: user.id },
         data: { lastLoginTime: new Date() },
@@ -400,7 +400,7 @@ const userResolvers: IResolvers<any, Context> = {
         throw new AuthenticationError("Invalid 2FA token");
       }
 
-      const jwtToken = generateToken(user.id);
+      const jwtToken = generateToken(user.id, user.username);
       return { token: jwtToken, user };
     },
   },

@@ -7,6 +7,8 @@ import { format } from "date-fns";
 import { User } from "../types";
 import Image from "../assests/default-avatar.png";
 import { useTranslation } from "react-i18next";
+import Friends from "./Friends";
+import FindFriends from "./FindFriends";
 
 const Dashboard: React.FC = () => {
   const {
@@ -31,12 +33,14 @@ const Dashboard: React.FC = () => {
     analyticsData.getUserAnalytics;
   return (
     <div className="my-8 w-full">
-      <h2 className="dark:text-white mb-6 text-xl ">
-        {t("welcome")} {fullname}{" "}
-      </h2>
-      <h1 className="text-3xl font-bold mb-6 dark:text-white">
-        {t("dashboard")}
-      </h1>
+      <div className="flex justify-between">
+        <h1 className="text-3xl font-bold mb-6 dark:text-white">
+          {t("dashboard")}
+        </h1>
+        <h2 className="dark:text-white mb-6 text-xl ">
+          {t("welcome")} {fullname}{" "}
+        </h2>
+      </div>
       <div className="mx-auto max-w-4xl">
         <div className="bg-white shadow rounded-lg  p-6 mb-6 ">
           <h2 className="text-xl font-semibold mb-4">Analytics</h2>
@@ -46,24 +50,11 @@ const Dashboard: React.FC = () => {
           <p>Total Likes: {totalLikes}</p>
         </div>
 
+        <div className="bg-white shadow rounded-lg p-6 mb-6 max-h-[calc(100vh-25rem)] ">
+          <FindFriends />
+        </div>
         <div className="bg-white shadow rounded-lg p-6 ">
-          <h2 className="text-xl font-semibold mb-4">Friends List</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {friendsData.getFriendsList.map((friend: User) => (
-              <div key={friend.id} className="flex items-center space-x-3">
-                <img
-                  src={
-                    (friend.profilePicture &&
-                      `data:image/jpeg;base64,${friend.profilePicture}`) ||
-                    Image
-                  }
-                  alt={`${friend.username}'s avatar`}
-                  className="w-10 h-10 rounded-full"
-                />
-                <span>{friend.username}</span>
-              </div>
-            ))}
-          </div>
+          <Friends />
         </div>
       </div>
     </div>

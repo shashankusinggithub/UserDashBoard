@@ -10,7 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import Avatar from "../assests/default-avatar.png";
 
-const FriendCard: React.FC<{
+export const FriendCard: React.FC<{
   friend: User;
   onChat: () => void;
   onUnfriend: () => void;
@@ -87,7 +87,7 @@ const Friends: React.FC = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4 dark:text-white">Friends</h1>
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
         {data.getFriendsList?.map((friend: User) => (
           <FriendCard
             key={friend.id}

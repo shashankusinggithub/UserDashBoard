@@ -1,13 +1,51 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import DarkModeToggle from "./DarkModeToggle";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useQuery, useSubscription } from "@apollo/client";
+import { GET_UNREAD_COUNTS } from "../graphql/queries";
+import {
+  NEW_NOTIFICATION_SUBSCRIPTION,
+  NEW_FRIEND_REQUEST_SUBSCRIPTION,
+  NEW_MESSAGE_SUBSCRIPTION,
+} from "../graphql/subscriptions";
 
 const Header: React.FC = () => {
   const { user, logout } = useAuth();
   const { t } = useTranslation();
+  const [unreadCounts, setUnreadCounts] = useState({
+    notifications: 0,
+    friendRequests: 0,
+    messages: 0,
+  });
+
+  const { data: unreadData, refetch } = useQuery(GET_UNREAD_COUNTS);
+
+  useEffect(() => {
+    if (unreadData) {
+      setUnreadCounts(unreadData.getUnreadCounts);
+    }
+  }, [unreadData]);
+
+  useSubscription(NEW_NOTIFICATION_SUBSCRIPTION, {
+    onData: () => {
+      refetch();
+    },
+  });
+
+  useSubscription(NEW_FRIEND_REQUEST_SUBSCRIPTION, {
+    onData: () => {
+      refetch();
+    },
+  });
+
+  useSubscription(NEW_MESSAGE_SUBSCRIPTION, {
+    onData: () => {
+      refetch();
+    },
+  });
 
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu
 
@@ -98,22 +136,7 @@ const Header: React.FC = () => {
                     {t("profile")}
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    to="/conversations"
-                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                  >
-                    {t("conversations")}
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/friends"
-                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                  >
-                    {t("friends")}
-                  </Link>
-                </li>
+
                 <li>
                   <Link
                     to="/find-friends"
@@ -122,14 +145,30 @@ const Header: React.FC = () => {
                     Find Friends
                   </Link>
                 </li>
-                <li>
-                  <Link
-                    to="/friend-requests"
-                    className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
-                  >
-                    Friend Requests
-                  </Link>
-                </li>
+                <Link to="/notifications" className="relative px-4 py-2">
+                  Notifications
+                  {unreadCounts.notifications > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                      {unreadCounts.notifications}
+                    </span>
+                  )}
+                </Link>
+                <Link to="/friend-requests" className="relative px-4 py-2">
+                  Friend Requests
+                  {unreadCounts.friendRequests > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                      {unreadCounts.friendRequests}
+                    </span>
+                  )}
+                </Link>
+                <Link to="/conversations" className="relative px-4 py-2">
+                  Messages
+                  {unreadCounts.messages > 0 && (
+                    <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
+                      {unreadCounts.messages}
+                    </span>
+                  )}
+                </Link>
               </ul>
             </div>
           )}

@@ -1,9 +1,7 @@
 import { IResolvers } from "@graphql-tools/utils";
 import { AuthenticationError } from "apollo-server-express";
-import { PubSub } from "graphql-subscriptions";
 import { Context } from "../context";
-
-const pubsub = new PubSub();
+import { pubsub } from "../pubsub";
 
 const notificationResolvers: IResolvers<any, Context> = {
   Query: {
@@ -20,31 +18,44 @@ const notificationResolvers: IResolvers<any, Context> = {
   },
 
   Mutation: {
-    markNotificationAsRead: async (
-      parent,
-      { notificationId },
-      { prisma, user }
-    ) => {
-      if (!user) {
-        throw new AuthenticationError("User not authenticated");
-      }
+    markNotificationAsRead: async (_, { id }, { prisma, user }: Context) => {
+      if (!user) throw new AuthenticationError("Not authenticated");
+
       const notification = await prisma.notification.update({
-        where: { id: notificationId, userId: user.id },
+        where: { id, userId: user.id },
         data: { read: true },
       });
-      return prisma.notification.findUnique({
-        where: { id: notificationId },
-        include: { user: true },
+
+      return notification;
+    },
+
+    testNotification: async (_, __, { user }) => {
+      if (!user) throw new AuthenticationError("Not authenticated");
+      const notification = {
+        id: "test-id",
+        content: "This is a test notification",
+        createdAt: new Date().toISOString(),
+        read: false,
+        linkId: "null",
+      };
+      await pubsub.publish(`NEW_NOTIFICATION_${user.id}`, {
+        newNotification: notification,
       });
+      console.log(`Test notification sent to user ${user.id}`);
+      return true;
     },
   },
   Subscription: {
     newNotification: {
-      subscribe: (parent, args, { prisma, user }) => {
+      subscribe: (parent, args, { user }) => {
         if (!user) {
           throw new AuthenticationError("User not authenticated");
         }
+        console.log(`User ${user.id} subscribed to notifications`);
         return pubsub.asyncIterator(`NEW_NOTIFICATION_${user.id}`);
+      },
+      resolve: (payload) => {
+        return payload.newNotification;
       },
     },
   },

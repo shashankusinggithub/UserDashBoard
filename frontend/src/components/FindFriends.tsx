@@ -35,22 +35,25 @@ const FindFriends: React.FC = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className=" w-full">
       <h2 className="text-2xl font-bold mb-4 dark:text-white">Find Friends</h2>
-      <form onSubmit={(e) => handleSearch(e)} className="mb-4">
+      <form
+        onSubmit={(e) => handleSearch(e)}
+        className="mb-4 flex align-middle"
+      >
         <input
           type="text"
           name="searchTerm"
           value={values.searchTerm}
           onChange={handleChange}
           placeholder="Search for users..."
-          className="w-full px-3 py-2 border rounded"
+          className="w-96 px-3 py-2 border rounded"
           required
         />
         <button
           type="submit"
           disabled={searchLoading}
-          className="mt-2 bg-blue-500 text-white px-4 py-2 rounded"
+          className=" bg-blue-500 text-white px-4 py-2 rounded ml-8"
         >
           {searchLoading ? "Searching..." : "Search"}
         </button>
@@ -74,7 +77,11 @@ const FindFriends: React.FC = () => {
                   {user.firstName} {user.lastName}
                 </p>
               </div>
-              {!user.isFriend && !sentRequests.has(user.id) && (
+              {user.isFriend ? (
+                <span className="text-grey-500">friend</span>
+              ) : sentRequests.has(user.id) ? (
+                <span className="text-green-500">Friend Request Sent</span>
+              ) : (
                 <button
                   onClick={() => handleSendFriendRequest(user.id)}
                   disabled={sendLoading}
@@ -82,9 +89,6 @@ const FindFriends: React.FC = () => {
                 >
                   Send Friend Request
                 </button>
-              )}
-              {sentRequests.has(user.id) && (
-                <span className="text-green-500">Friend Request Sent</span>
               )}
             </div>
           ))}

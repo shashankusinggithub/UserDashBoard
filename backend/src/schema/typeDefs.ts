@@ -17,6 +17,13 @@ const typeDefs = gql`
     twoFactorSecret: String
     twoFactorEnabled: Boolean!
   }
+
+  type UnreadCounts {
+    notifications: Int!
+    friendRequests: Int!
+    messages: Int!
+  }
+
   type LoginResult {
     token: String
     user: User
@@ -94,6 +101,7 @@ const typeDefs = gql`
     user: User!
     read: Boolean!
     createdAt: String!
+    linkId: String
   }
 
   type ConversationParticipant {
@@ -120,10 +128,13 @@ const typeDefs = gql`
     messages(conversationId: ID!): [Message!]!
     getUserAnalytics: Analytics!
     getFriendsList: [User!]!
+    getUnreadCounts: UnreadCounts!
   }
 
   type Mutation {
     removeFriend(friendId: ID!): User!
+    markNotificationAsRead(id: ID!): Notification!
+    testNotification: Boolean!
     register(
       username: String!
       email: String!
@@ -141,7 +152,6 @@ const typeDefs = gql`
     createComment(postId: ID!, content: String!): Comment
     sendFriendRequest(receiverId: ID!): FriendRequest
     respondToFriendRequest(requestId: ID!, accept: Boolean!): FriendRequest
-    markNotificationAsRead(notificationId: ID!): Notification
     createConversation(participantIds: [ID!]!): Conversation!
     sendMessage(conversationId: ID!, content: String!): Message!
     updateProfilePicture(base64Image: String!): User
@@ -158,9 +168,9 @@ const typeDefs = gql`
 
   type Subscription {
     newPost: Post
-    newFriendRequest: FriendRequest
     newMessage(conversationId: ID!): Message!
-    newNotification: Notification
+    newNotification: Notification!
+    newFriendRequest: FriendRequest!
   }
   type Analytics {
     fullname: String

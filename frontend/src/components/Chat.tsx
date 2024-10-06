@@ -48,7 +48,6 @@ const Chat: React.FC = () => {
     e.preventDefault();
     try {
       const { data: sendData } = await sendMessage({
-        // Capture the response
         variables: { conversationId: id, content: values.content },
       });
       resetForm();

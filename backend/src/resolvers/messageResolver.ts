@@ -202,7 +202,24 @@ const messageResolver: IResolvers = {
         pubsub.publish(`NEW_MESSAGE_${conversationId}`, {
           newMessage: message,
         });
-        console.log("Message published to pubsub"); // Log pubsub publication
+
+        const otherParticipants = message.conversation.participants.filter(
+          (p) => p.userId !== user.id
+        );
+        for (const participant of otherParticipants) {
+          let notification = await prisma.notification.create({
+            data: {
+              content: `New message from ${user.username}`,
+              userId: participant.userId,
+              type: "NEW_MESSAGE",
+              linkId: conversationId,
+            },
+          });
+
+          pubsub.publish(`NEW_NOTIFICATION_${participant.userId}`, {
+            newNotification: notification,
+          });
+        }
 
         return message;
       } catch (error) {

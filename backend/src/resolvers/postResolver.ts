@@ -97,7 +97,8 @@ const postResolver: IResolvers = {
         });
 
         pubsub.publish("NEW_POST", { newPost });
-        await invalidatePostCaches(user.id);
+        await invalidatePostCaches({ userId: user.id, allPosts: true });
+
         const friendIds = await prisma.user
           .findUnique({
             where: { id: user.id },
@@ -105,13 +106,21 @@ const postResolver: IResolvers = {
           })
           .then((data) => data?.friends.map((friend) => friend.id) || []);
 
-        await prisma.notification.createMany({
-          data: friendIds.map((friendId) => ({
-            type: "NEW_POST",
-            content: `${user.username} has created a new post`,
-            userId: friendId,
-          })),
-        });
+        for (const friendId of friendIds) {
+          let notification = await prisma.notification.create({
+            data: {
+              type: "NEW_POST",
+              content: `${user.username} has created a new post`,
+              userId: friendId,
+              linkId: newPost.id,
+            },
+          });
+          console.log(`Publishing notification for user ${friendId}`);
+          console.log(notification);
+          pubsub.publish(`NEW_NOTIFICATION_${friendId}`, {
+            newNotification: notification,
+          });
+        }
 
         return newPost;
       } catch (error) {
@@ -140,11 +149,28 @@ const postResolver: IResolvers = {
     },
     likePost: async (_, { id }, { prisma, user }: Context) => {
       if (!user) throw new AuthenticationError("Not authenticated");
-      return prisma.post.update({
+      const post = await prisma.post.update({
         where: { id },
         data: { likes: { create: { userId: user.id } } },
         include: { author: true },
       });
+
+      if (post.author.id !== user.id) {
+        const notification = await prisma.notification.create({
+          data: {
+            content: `${user.username} liked your post`,
+            userId: post.author.id,
+            type: "NEW_LIKE",
+            linkId: id,
+          },
+        });
+
+        pubsub.publish(`NEW_NOTIFICATION_${post.author.id}`, {
+          newNotification: notification,
+        });
+      }
+
+      return post;
     },
   },
 
@@ -165,11 +191,17 @@ const postResolver: IResolvers = {
   },
 };
 
-async function invalidatePostCaches(userId: string) {
+async function invalidatePostCaches(invalidators: {
+  userId: string;
+  allPosts?: boolean;
+}) {
   const cacheKeys = [
-    `posts:friends:${userId}`, // friends only posts for this user
-    ALL_POSTS_CACHE_KEY, // all posts (global)
+    `posts:friends:${invalidators.userId}`, // friends only posts for this user
   ];
+  if (invalidators.allPosts) {
+    console.log("resetting all posts");
+    cacheKeys.push(ALL_POSTS_CACHE_KEY);
+  }
 
   for (const key of cacheKeys) {
     await setCache(key, null, 1); // Set to null and expire immediately

@@ -20,6 +20,7 @@ export const NEW_NOTIFICATION_SUBSCRIPTION = gql`
       content
       createdAt
       read
+      linkId
     }
   }
 `;
@@ -34,6 +35,18 @@ export const NEW_POST_SUBSCRIPTION = gql`
         username
       }
       createdAt
+    }
+  }
+`;
+
+export const NEW_FRIEND_REQUEST_SUBSCRIPTION = gql`
+  subscription OnNewFriendRequest {
+    newFriendRequest {
+      id
+      sender {
+        id
+        username
+      }
     }
   }
 `;

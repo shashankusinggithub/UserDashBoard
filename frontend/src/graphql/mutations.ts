@@ -112,7 +112,7 @@ export const ACCEPT_FRIEND_REQUEST = gql`
 
 export const REJECT_FRIEND_REQUEST = gql`
   mutation respondToFriendRequest($requestId: ID!) {
-    rejectFriendRequest(requestId: $requestId, accept: false) {
+    respondToFriendRequest(requestId: $requestId, accept: false) {
       id
       status
     }

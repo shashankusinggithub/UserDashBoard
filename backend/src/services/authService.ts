@@ -1,12 +1,14 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-export const generateToken = (userId: string) => {
+export const generateToken = (userId: string, username: string) => {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
     throw new Error("JWT_SECRET is not defined");
   }
-  return jwt.sign({ id: userId }, secret, { expiresIn: "1d" });
+  return jwt.sign({ id: userId, username: username }, secret, {
+    expiresIn: "1d",
+  });
 };
 
 export const hashPassword = async (password: string) => {

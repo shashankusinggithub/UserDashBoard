@@ -113,6 +113,17 @@ export const GET_NOTIFICATIONS = gql`
       content
       createdAt
       read
+      linkId
+    }
+  }
+`;
+
+export const GET_UNREAD_COUNTS = gql`
+  query GetUnreadCounts {
+    getUnreadCounts {
+      notifications
+      friendRequests
+      messages
     }
   }
 `;

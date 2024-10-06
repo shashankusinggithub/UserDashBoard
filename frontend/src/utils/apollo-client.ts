@@ -40,8 +40,8 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
     graphQLErrors.forEach(({ message, locations, path, extensions }) => {
       if (extensions?.code === "UNAUTHENTICATED") {
-        logout();
-        window.location.href = "/login";
+        // logout();
+        // window.location.href = "/login";
       }
       console.log(
         `[GraphQL error]: Message: ${message}, Location: ${locations?.toLocaleString()}, Path: ${path}`

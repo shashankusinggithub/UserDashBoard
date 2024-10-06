@@ -82,6 +82,7 @@ export interface Notification {
   user: User;
   read: boolean;
   createdAt: string;
+  linkId: string;
 }
 
 // Input types for mutations

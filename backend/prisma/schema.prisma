@@ -155,6 +155,7 @@ model Notification {
   user      User             @relation(fields: [userId], references: [id])
   read      Boolean          @default(false)
   createdAt DateTime         @default(now())
+  linkId    String?
 
   @@map("notifications")
 }
