@@ -73,7 +73,13 @@ const typeDefs = gql`
     createdAt: String!
     updatedAt: String
   }
-
+  type ChatMessage {
+    id: ID!
+    senderId: ID!
+    receiverId: ID!
+    content: String!
+    createdAt: String!
+  }
   type FriendRequest {
     id: ID!
     sender: User!
@@ -129,9 +135,11 @@ const typeDefs = gql`
     getUserAnalytics: Analytics!
     getFriendsList: [User!]!
     getUnreadCounts: UnreadCounts!
+    getDirectMessages(otherUserId: ID!): [ChatMessage!]!
   }
 
   type Mutation {
+    sendDirectMessage(receiverId: ID!, content: String!): ChatMessage!
     removeFriend(friendId: ID!): User!
     markNotificationAsRead(id: ID!): Notification!
     testNotification: Boolean!
@@ -168,9 +176,10 @@ const typeDefs = gql`
 
   type Subscription {
     newPost: Post
-    newMessage(conversationId: ID!): Message!
+    newMessage: Message!
     newNotification: Notification!
     newFriendRequest: FriendRequest!
+    newDirectMessage(userId: ID!): ChatMessage!
   }
   type Analytics {
     fullname: String

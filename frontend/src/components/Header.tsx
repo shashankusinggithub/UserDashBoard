@@ -21,31 +21,31 @@ const Header: React.FC = () => {
     messages: 0,
   });
 
-  const { data: unreadData, refetch } = useQuery(GET_UNREAD_COUNTS);
+  // const { data: unreadData, refetch } = useQuery(GET_UNREAD_COUNTS);
 
-  useEffect(() => {
-    if (unreadData) {
-      setUnreadCounts(unreadData.getUnreadCounts);
-    }
-  }, [unreadData]);
+  // useEffect(() => {
+  //   if (unreadData) {
+  //     setUnreadCounts(unreadData.getUnreadCounts);
+  //   }
+  // }, [unreadData]);
 
-  useSubscription(NEW_NOTIFICATION_SUBSCRIPTION, {
-    onData: () => {
-      refetch();
-    },
-  });
+  // useSubscription(NEW_NOTIFICATION_SUBSCRIPTION, {
+  //   onData: () => {
+  //     refetch();
+  //   },
+  // });
 
-  useSubscription(NEW_FRIEND_REQUEST_SUBSCRIPTION, {
-    onData: () => {
-      refetch();
-    },
-  });
+  // useSubscription(NEW_FRIEND_REQUEST_SUBSCRIPTION, {
+  //   onData: () => {
+  //     refetch();
+  //   },
+  // });
 
-  useSubscription(NEW_MESSAGE_SUBSCRIPTION, {
-    onData: () => {
-      refetch();
-    },
-  });
+  // useSubscription(NEW_MESSAGE_SUBSCRIPTION, {
+  //   onData: () => {
+  //     refetch();
+  //   },
+  // });
 
   const [isMenuOpen, setIsMenuOpen] = useState(false); // State for mobile menu
 

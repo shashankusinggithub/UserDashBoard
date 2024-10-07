@@ -7,6 +7,7 @@ import messageResolver from "./messageResolver";
 import notificationResolver from "./notificationResolver";
 import postResolver from "./postResolver";
 import friendRequestResolver from "./friendRequestResolver";
+import chatResolver from "./chatResolver";
 import { applyRateLimiter } from "../utils/rateLimiter";
 
 // Function to apply rate limiter to all resolvers in an object
@@ -37,6 +38,7 @@ const rateListedResolvers = [
   applyRateLimiterToResolvers(notificationResolver),
   applyRateLimiterToResolvers(postResolver),
   applyRateLimiterToResolvers(friendRequestResolver),
+  applyRateLimiterToResolvers(chatResolver),
 ];
 
 // Merge the rate-limited resolvers

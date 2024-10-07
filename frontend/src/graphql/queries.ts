@@ -16,6 +16,17 @@ export const GET_POSTS = gql`
     }
   }
 `;
+export const GET_DIRECT_MESSAGES = gql`
+  query GetDirectMessages($otherUserId: ID!) {
+    getDirectMessages(otherUserId: $otherUserId) {
+      id
+      senderId
+      receiverId
+      content
+      createdAt
+    }
+  }
+`;
 
 export const GET_CONVERSATIONS = gql`
   query GetConversations {

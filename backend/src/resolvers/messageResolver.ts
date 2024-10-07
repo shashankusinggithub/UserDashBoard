@@ -6,6 +6,7 @@ import {
 } from "apollo-server-express";
 import { Context } from "../context";
 import { pubsub } from "../pubsub";
+import { withFilter } from "graphql-subscriptions";
 
 const messageResolver: IResolvers = {
   Query: {
@@ -197,10 +198,12 @@ const messageResolver: IResolvers = {
           },
         });
 
-        console.log("Message created:", message); // Log the created message
-
-        pubsub.publish(`NEW_MESSAGE_${conversationId}`, {
-          newMessage: message,
+        message.conversation.participants.forEach((participant) => {
+          if (participant.userId !== user.id) {
+            pubsub.publish(`NEW_MESSAGE`, {
+              newMessage: message,
+            });
+          }
         });
 
         const otherParticipants = message.conversation.participants.filter(
@@ -231,13 +234,18 @@ const messageResolver: IResolvers = {
 
   Subscription: {
     newMessage: {
-      subscribe: (_, { conversationId }, { user }: Context) => {
-        if (!user) throw new AuthenticationError("Not authenticated");
-        console.log(
-          `User ${user.id} subscribed to NEW_MESSAGE_${conversationId}`
-        ); // Log subscription
-        return pubsub.asyncIterator(`NEW_MESSAGE_${conversationId}`);
-      },
+      subscribe: withFilter(
+        () => pubsub.asyncIterator("NEW_MESSAGE"),
+        (payload, variables, { user }) => {
+          if (!user) throw new AuthenticationError("Not authenticated");
+
+          return (
+            payload.newMessage.conversation.participants.some(
+              (participant) => participant.userId === user.id
+            ) && payload.newMessage.sender.id !== user.id
+          );
+        }
+      ),
     },
   },
 };

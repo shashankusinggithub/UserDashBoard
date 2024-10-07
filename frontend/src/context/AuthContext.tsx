@@ -1,8 +1,8 @@
 // src/context/AuthContext.tsx
-
 import React, { createContext, useState, useEffect } from "react";
 import { ApolloClient } from "@apollo/client";
 import { resetApolloCache } from "../utils/apollo-client";
+import { useStores } from "../hooks/useStores";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -31,22 +31,26 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const { chatWindowStore } = useStores();
 
   useEffect(() => {
     globalLogout = logout;
     const token = localStorage.getItem("token");
     const storedUser = localStorage.getItem("user");
     if (token && storedUser) {
+      const parsedUser = JSON.parse(storedUser);
       setIsAuthenticated(true);
-      setUser(JSON.parse(storedUser));
+      setUser(parsedUser);
+      chatWindowStore.setCurrentUserId(parsedUser.id);
     }
-  }, []);
+  }, [chatWindowStore]);
 
   const login = (token: string, user: any) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(user));
     setIsAuthenticated(true);
     setUser(user);
+    chatWindowStore.setCurrentUserId(user.id);
   };
 
   const logout = () => {
@@ -55,6 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({
       localStorage.removeItem("user");
       setIsAuthenticated(false);
       setUser(null);
+      chatWindowStore.setCurrentUserId("");
       resetApolloCache();
       window.location.href = "/login";
     } catch (error) {

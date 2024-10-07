@@ -1,13 +1,29 @@
 import { gql } from "@apollo/client";
 
 export const NEW_MESSAGE_SUBSCRIPTION = gql`
-  subscription OnNewMessage($conversationId: ID!) {
-    newMessage(conversationId: $conversationId) {
+  subscription OnNewMessage {
+    newMessage {
       id
       content
       sender {
+        id
         username
       }
+      conversation {
+        id
+      }
+      createdAt
+    }
+  }
+`;
+
+export const NEW_DIRECT_MESSAGE_SUBSCRIPTION = gql`
+  subscription NewDirectMessage($userId: ID!) {
+    newDirectMessage(userId: $userId) {
+      id
+      senderId
+      receiverId
+      content
       createdAt
     }
   }

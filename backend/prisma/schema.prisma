@@ -43,6 +43,10 @@ model User {
 
   notifications Notification[]
 
+  sentMessages     ChatMessage[] @relation("SentMessages")
+  receivedMessages ChatMessage[] @relation("ReceivedMessages")
+  ChatMessage      ChatMessage[]
+
   @@map("users")
 }
 
@@ -64,6 +68,20 @@ model Post {
   likes    Like[]
 
   @@map("posts")
+}
+
+model ChatMessage {
+  id         String   @id @default(uuid())
+  senderId   String
+  sender     User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  content    String
+  createdAt  DateTime @default(now())
+  User       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+
+  @@map("chat_messages")
 }
 
 model Comment {

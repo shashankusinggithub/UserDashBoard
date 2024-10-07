@@ -9,8 +9,9 @@ import {
 } from "../graphql/mutations";
 import { useNavigate } from "react-router-dom";
 import Avatar from "../assests/default-avatar.png";
+import ChatInitiator from "./ChatInitiator";
 
-export const FriendCard: React.FC<{
+const FriendCard: React.FC<{
   friend: User;
   onChat: () => void;
   onUnfriend: () => void;
@@ -35,12 +36,7 @@ export const FriendCard: React.FC<{
       <div className="flex items-center space-x-2">
         {" "}
         {/* Removed ml-auto */}
-        <button
-          onClick={onChat}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200"
-        >
-          Chat
-        </button>
+        <ChatInitiator userId={friend.id} username={friend.username} />
         <button
           onClick={onUnfriend}
           className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200"
@@ -87,7 +83,7 @@ const Friends: React.FC = () => {
   return (
     <div>
       <h1 className="text-3xl font-bold mb-4 dark:text-white">Friends</h1>
-      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
         {data.getFriendsList?.map((friend: User) => (
           <FriendCard
             key={friend.id}

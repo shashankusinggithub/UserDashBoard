@@ -1,59 +1,48 @@
 import React, { useEffect } from "react";
-import { useQuery, useMutation, useSubscription } from "@apollo/client";
+import { observer } from "mobx-react-lite";
+import { useStores } from "../hooks/useStores";
+import { useQuery, useMutation } from "@apollo/client";
 import { GET_NOTIFICATIONS } from "../graphql/queries";
 import { MARK_NOTIFICATION_AS_READ } from "../graphql/mutations";
-import { Notification } from "../types";
 import { Link } from "react-router-dom";
 import { NEW_NOTIFICATION_SUBSCRIPTION } from "../graphql/subscriptions";
 
-const Notifications: React.FC = () => {
-  const { loading, error, data, refetch, subscribeToMore } =
-    useQuery(GET_NOTIFICATIONS);
-
+const Notifications: React.FC = observer(() => {
+  const { notificationStore } = useStores();
+  const { loading, error, data, subscribeToMore } = useQuery(GET_NOTIFICATIONS);
   const [markAsRead] = useMutation(MARK_NOTIFICATION_AS_READ);
 
-  const { data: subData } = useSubscription(NEW_NOTIFICATION_SUBSCRIPTION);
   useEffect(() => {
-    if (subData) {
-      console.log("New notification received:", subData);
-      // Handle the new notification here
+    if (data) {
+      notificationStore.setNotifications(data.notifications);
     }
-  }, [subData]);
+  }, [data, notificationStore]);
 
   useEffect(() => {
     const unsubscribe = subscribeToMore({
       document: NEW_NOTIFICATION_SUBSCRIPTION,
-
       updateQuery: (prev, { subscriptionData }) => {
-        console.log("Received new notification:", subscriptionData);
         if (!subscriptionData.data) return prev;
         const newNotification = subscriptionData.data.newNotification;
-        return {
-          ...prev,
-          notifications: [newNotification, ...prev.notifications],
-        };
-      },
-      onError: (error) => {
-        console.error("Subscription error:", error);
+        notificationStore.addNotification(newNotification);
+        return prev;
       },
     });
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, [subscribeToMore, data]);
+    return () => unsubscribe();
+  }, [subscribeToMore, notificationStore]);
+
+  const handleMarkAsRead = async (id: string) => {
+    await markAsRead({ variables: { id } });
+    notificationStore.markAsRead(id);
+  };
 
   if (loading) return <p>Loading notifications...</p>;
   if (error) return <p>Error loading notifications: {error.message}</p>;
 
-  const handleMarkAsRead = async (id: string) => {
-    await markAsRead({ variables: { id } });
-    refetch();
-  };
-
   return (
     <div className="max-w-2xl mx-auto mt-8">
       <h2 className="text-2xl font-bold mb-4">Notifications</h2>
-      {data.notifications.map((notification: Notification) => (
+      {notificationStore?.notifications?.map((notification) => (
         <div
           key={notification.id}
           className="bg-white shadow rounded-lg p-4 mb-4"
@@ -76,6 +65,6 @@ const Notifications: React.FC = () => {
       ))}
     </div>
   );
-};
+});
 
 export default Notifications;

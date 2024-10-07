@@ -15,6 +15,18 @@ export const LOGIN = gql`
   }
 `;
 
+export const SEND_DIRECT_MESSAGE = gql`
+  mutation SendDirectMessage($receiverId: ID!, $content: String!) {
+    sendDirectMessage(receiverId: $receiverId, content: $content) {
+      id
+      senderId
+      receiverId
+      content
+      createdAt
+    }
+  }
+`;
+
 export const REGISTER = gql`
   mutation Register(
     $username: String!
